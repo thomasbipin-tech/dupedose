@@ -49,10 +49,11 @@ async function main() {
   if (!process.env.ANTHROPIC_API_KEY) { console.error("✗ ANTHROPIC_API_KEY not set."); process.exit(1); }
   const sb = supabaseAdmin()!;
 
+  const offset = process.env.OFFSET ? parseInt(process.env.OFFSET, 10) : 0;
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : INTENTS.length;
   const replace = process.env.REPLACE === "1";
-  const intents = INTENTS.slice(0, limit);
-  console.log(`→ Building ${intents.length} intent(s)${replace ? " (REPLACE mode)" : ""}`);
+  const intents = INTENTS.slice(offset, offset + limit);
+  console.log(`→ Building ${intents.length} intent(s) from offset ${offset}${replace ? " (REPLACE mode)" : ""}`);
 
   await sb.storage.createBucket(BUCKET, { public: true }).catch(() => {});
 
@@ -92,11 +93,13 @@ async function main() {
     const relRows: any[] = [];
     const offerKeys = new Set<string>();
 
-    const addProduct = async (brand: string, name: string, cand: ShoppingResult, isOriginal: boolean, desc: string, target: string) => {
+    const addProduct = async (brand: string, name: string, cand: ShoppingResult, isOriginal: boolean, desc: string, target: string, rehost = true) => {
       const id = slugify(`${brand} ${name}`);
       if (!id) return null;
       if (!seenProducts.has(id)) {
-        const image = await rehostImage(sb, id, cand.thumbnail);
+        // Re-host prominent products (originals + dupes) for durability; long-tail
+        // catalog extras use the source image directly to keep the build fast.
+        const image = rehost ? (await rehostImage(sb, id, cand.thumbnail)) ?? cand.thumbnail ?? null : (cand.thumbnail ?? null);
         prodRows.push({
           id, brand_id: slugify(brand), brand_name: brand, name, category: intent.category, subcategory: intent.subcategory,
           price: cand.price ?? null, image, rating: cand.rating ?? (isOriginal ? 4.6 : 4.4), review_count: cand.reviews ?? 0,
@@ -128,6 +131,14 @@ async function main() {
       if (!dId || dId === oId) continue;
       relRows.push({ original_id: oId, dupe_id: dId, match_score: d.matchScore, dupe_level: d.dupeLevel, reason: d.reason, engine_version: RANK_ENGINE_VERSION });
       relRows.push({ original_id: dId, dupe_id: oId, match_score: d.matchScore, dupe_level: invertLevel[d.dupeLevel], reason: `Higher-end pick that ${d.brand} ${d.name} is a dupe of`, engine_version: RANK_ENGINE_VERSION });
+    }
+
+    // Vetted catalog products (no relationship to original; they get same-subcategory
+    // alternatives at runtime). This is what scales the catalog into the thousands.
+    for (const cItem of ranked.catalog ?? []) {
+      const cand = dupeRes[cItem.index];
+      if (!cand || cand.price == null || !cand.thumbnail) continue; // require a real price + image
+      await addProduct(cItem.brand, cItem.name, cand, false, `${cItem.brand} ${cItem.name} — a ${intent.subcategory.toLowerCase()} alternative.`, `${intent.subcategory} shoppers`, false);
     }
 
     // Incremental upsert for this cluster (progress persists).
