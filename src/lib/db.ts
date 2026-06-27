@@ -108,6 +108,36 @@ function toFallbackAlt(anchor: Product, p: Product): AlternativeProduct {
     : `Popular ${sub} alternative`;
   return { ...p, matchScore: 72, dupeLevel: level, reason };
 }
+// Keep the reason wording consistent with the price-derived tier so a pricier
+// pick never reads as "cheaper" (and vice-versa).
+function coherentReason(level: DupeLevel, sub: string, stored: string): string {
+  const cheap = /cheaper|fraction|affordable|budget|for less|lower price|less expensive|save/i;
+  const lux = /higher[- ]end|premium|luxury|pricier|splurge|original/i;
+  if (level === "premium" && cheap.test(stored)) return `Higher-end ${sub} with a comparable look and results`;
+  if (level === "budget" && lux.test(stored)) return `More affordable ${sub} with a comparable result`;
+  return stored;
+}
+// Re-tier a curated alternative by ACTUAL price vs the page's anchor, so labels
+// always match reality (e.g. a $4,460 pick on a cheaper page reads "Premium").
+function retier(anchor: Product, alt: AlternativeProduct): AlternativeProduct {
+  const level = fallbackDupeLevel(anchor.price, alt.price);
+  return { ...alt, dupeLevel: level, reason: coherentReason(level, anchor.subcategory.toLowerCase(), alt.reason) };
+}
+// Drop near-duplicate alternatives (same brand + essentially the same name) and cap.
+function normKey(p: { brandName: string; name: string }) {
+  return `${p.brandName} ${p.name}`.toLowerCase().replace(/\b(women'?s|men'?s|set|kit)\b/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+}
+function finalizeAlts(list: AlternativeProduct[]): AlternativeProduct[] {
+  const seen = new Set<string>();
+  const out: AlternativeProduct[] = [];
+  for (const a of list) {
+    const k = normKey(a);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(a);
+  }
+  return out.slice(0, ALT_TARGET);
+}
 const ALT_TARGET = 6;
 function rankCandidates(anchor: Product, candidates: Product[], excludeIds: Set<string>, limit: number): Product[] {
   return candidates
@@ -130,7 +160,7 @@ export async function getProductAlternatives(productId: string): Promise<Alterna
       .select("match_score, dupe_level, reason, dupe:products!dupe_relationships_dupe_id_fkey(*)")
       .eq("original_id", productId)
       .order("match_score", { ascending: false });
-    const curated = (data ?? [])
+    let curated = (data ?? [])
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((row: any) => {
         const dupe = Array.isArray(row.dupe) ? row.dupe[0] : row.dupe;
@@ -138,7 +168,8 @@ export async function getProductAlternatives(productId: string): Promise<Alterna
         return { ...rowToProduct(dupe), matchScore: row.match_score, dupeLevel: row.dupe_level, reason: row.reason };
       })
       .filter(Boolean) as AlternativeProduct[];
-    if (curated.length >= ALT_TARGET || !anchor) return curated.slice(0, ALT_TARGET);
+    if (anchor) curated = curated.map((a) => retier(anchor, a));
+    if (curated.length >= ALT_TARGET || !anchor) return finalizeAlts(curated);
     // Top up ONLY with the same SUBCATEGORY (e.g. lipstick→lipsticks, never
     // lipstick→serum). Showing fewer, relevant items beats padding with
     // mismatched ones. Excludes the curated dupes + the original.
@@ -152,21 +183,22 @@ export async function getProductAlternatives(productId: string): Promise<Alterna
       .limit(20);
     const exclude = new Set(curated.map((c) => c.id));
     const fill = rankCandidates(anchor, (cand ?? []).map(rowToProduct), exclude, ALT_TARGET - curated.length).map((p) => toFallbackAlt(anchor, p));
-    return [...curated, ...fill];
+    return finalizeAlts([...curated, ...fill]);
   }
   // Seed fallback (no DB)
   const alts = ALTERNATIVES[productId] ?? [];
-  const curated = alts
+  let curated = alts
     .map((alt) => {
       const product = PRODUCTS.find((p) => p.id === alt.productId);
       if (!product) return null;
       return { ...product, matchScore: alt.matchScore, dupeLevel: alt.dupeLevel, reason: alt.reason };
     })
     .filter(Boolean) as AlternativeProduct[];
-  if (curated.length >= ALT_TARGET || !anchor) return curated.slice(0, ALT_TARGET);
+  if (anchor) curated = curated.map((a) => retier(anchor, a));
+  if (curated.length >= ALT_TARGET || !anchor) return finalizeAlts(curated);
   const exclude = new Set(curated.map((c) => c.id));
   const fill = rankCandidates(anchor, PRODUCTS.filter((p) => p.category === anchor.category && p.subcategory === anchor.subcategory), exclude, ALT_TARGET - curated.length).map((p) => toFallbackAlt(anchor, p));
-  return [...curated, ...fill];
+  return finalizeAlts([...curated, ...fill]);
 }
 
 export async function searchProducts(query: string): Promise<Product[]> {
