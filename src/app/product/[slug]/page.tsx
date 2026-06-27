@@ -136,19 +136,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Info */}
         <div>
           <Link href={`/category/${product.category}`} className="no-underline">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3"
-              style={{ background: cat?.bgColor, color: cat?.color, fontFamily: "system-ui, sans-serif" }}>
-              {cat?.icon} {cat?.label}
-            </span>
+            <span className="eyebrow inline-block mb-3">{cat?.label}</span>
           </Link>
-          <p className="text-sm font-medium mb-1" style={{ color: "var(--rose)", fontFamily: "system-ui, sans-serif" }}>{product.brandName}</p>
-          <h1 style={{ fontSize: "2rem", fontFamily: "Georgia, serif", fontWeight: 700, lineHeight: 1.15, marginBottom: "1rem" }}>
+          <p className="text-sm font-semibold mb-1" style={{ color: "var(--foreground)", letterSpacing: "0.03em" }}>{product.brandName}</p>
+          <h1 style={{ fontSize: "2rem", fontWeight: 600, lineHeight: 1.15, marginBottom: "1rem", letterSpacing: "-0.01em" }}>
             {product.name}
           </h1>
           <StarRating rating={product.rating} count={product.reviewCount} />
 
           <div className="my-4 flex items-baseline gap-3">
-            <span style={{ fontSize: "2rem", fontFamily: "Georgia, serif", fontWeight: 700 }}>{formatPrice(product.price)}</span>
+            <span style={{ fontSize: "1.9rem", fontWeight: 600 }}>{formatPrice(product.price)}</span>
           </div>
 
           <p style={{ color: "var(--muted)", fontFamily: "system-ui, sans-serif", lineHeight: 1.7, marginBottom: "1.25rem" }}>
@@ -164,8 +161,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
           {product.attributes && Object.keys(product.attributes).length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
               {Object.entries(product.attributes).slice(0, 4).map(([k, v]) => (
-                <span key={k} className="px-3 py-1 rounded-full text-xs"
-                  style={{ background: "var(--rose-light)", color: "var(--rose-dark)", fontFamily: "system-ui, sans-serif" }}>
+                <span key={k} className="px-3 py-1 text-xs"
+                  style={{ background: "var(--background-alt)", color: "var(--foreground)", border: "1px solid var(--border)", borderRadius: 999 }}>
                   {k.replace(/([A-Z])/g, " $1").trim()}: {typeof v === "boolean" ? (v ? "Yes" : "No") : String(v)}
                 </span>
               ))}
@@ -181,8 +178,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <div className="flex flex-col gap-2">
                 {offers.map((offer) => (
                   <a key={offer.id} href={`/api/go/${offer.id}`} target="_blank" rel="sponsored nofollow noopener"
-                    className="no-underline flex items-center justify-between px-5 py-3.5 rounded-2xl font-semibold transition-all"
-                    style={{ background: "var(--rose)", color: "#fff", fontFamily: "system-ui, sans-serif" }}>
+                    className="no-underline flex items-center justify-between px-5 py-3.5 btn-primary"
+                    style={{ fontWeight: 600 }}>
                     <span>View Deal at {offer.retailerName}</span>
                     {/* Amazon's Operating Agreement restricts showing non-API prices — show a CTA instead. */}
                     <span>{offer.network === "amazon" ? "Check price" : offer.price ? formatPrice(offer.price) : "Shop"} →</span>
@@ -200,8 +197,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
 
           <Link href={`/compare?a=${product.slug}`}
-            className="no-underline inline-block px-5 py-3 rounded-2xl font-semibold"
-            style={{ border: "2px solid var(--border)", color: "var(--foreground)", fontFamily: "system-ui, sans-serif" }}>
+            className="no-underline inline-block px-5 py-3 btn-ghost" style={{ fontWeight: 600 }}>
             Compare with alternatives
           </Link>
         </div>
@@ -212,8 +208,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "var(--rose)", fontFamily: "system-ui, sans-serif" }}>AI-Matched</p>
-              <h2 style={{ fontSize: "1.5rem", fontFamily: "Georgia, serif", fontWeight: 700 }}>
+              <p className="eyebrow mb-1">Ranked dupes</p>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: 600 }}>
                 Best alternatives to {product.name}
               </h2>
             </div>
@@ -228,12 +224,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Ingredients */}
       {product.ingredients && product.ingredients.length > 0 && (
-        <section className="mb-16 p-8 rounded-2xl" style={{ background: "#fff", border: "1px solid var(--border)" }}>
-          <h2 style={{ fontSize: "1.25rem", fontFamily: "Georgia, serif", fontWeight: 700, marginBottom: "1rem" }}>Key Ingredients</h2>
+        <section className="mb-16 p-8" style={{ background: "#fff", border: "1px solid var(--border)" }}>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: 600, marginBottom: "1rem" }}>Key Ingredients</h2>
           <div className="flex flex-wrap gap-2">
             {product.ingredients.map((ing) => (
-              <span key={ing} className="px-3 py-1.5 rounded-full text-sm"
-                style={{ background: "var(--gold-light)", color: "var(--gold-dark)", fontFamily: "system-ui, sans-serif" }}>
+              <span key={ing} className="px-3 py-1.5 text-sm"
+                style={{ background: "var(--background-alt)", color: "var(--foreground)", border: "1px solid var(--border)", borderRadius: 999 }}>
                 {ing}
               </span>
             ))}
@@ -244,7 +240,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       {/* Comparison table */}
       {comparisonProducts.length >= 2 && (
         <section className="mb-16">
-          <h2 style={{ fontSize: "1.5rem", fontFamily: "Georgia, serif", fontWeight: 700, marginBottom: "1.25rem" }}>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "1.25rem" }}>
             Side-by-Side Comparison
           </h2>
           <ComparisonTable products={comparisonProducts} />

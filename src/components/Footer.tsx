@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "./Logo";
 
 export default function Footer() {
   const col = (title: string, links: [string, string][]) => (
@@ -17,7 +18,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           <div>
-            <p style={{ fontSize: "1.35rem", fontWeight: 700, letterSpacing: "0.02em", marginBottom: 10 }}>DUPEDOSE</p>
+            <div style={{ marginBottom: 12 }}><Logo size={26} /></div>
             <p style={{ fontSize: "0.85rem", color: "var(--muted)", lineHeight: 1.6, maxWidth: 220 }}>
               The smart way to find affordable dupes for the beauty, hair, and jewelry you love.
             </p>

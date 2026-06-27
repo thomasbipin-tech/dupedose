@@ -52,17 +52,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       {/* Hero banner */}
-      <div style={{
-        background: `linear-gradient(135deg, ${cat.color}22 0%, ${cat.bgColor} 100%)`,
-        borderBottom: "1px solid var(--border)",
-      }} className="py-16">
+      <div style={{ background: "var(--background-alt)", borderBottom: "1px solid var(--border)" }} className="py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-6xl mb-4" style={{ color: cat.color }}>{cat.icon}</div>
-          <h1 style={{ fontSize: "2.5rem", fontFamily: "Georgia, serif", fontWeight: 700, marginBottom: "0.75rem" }}>
-            {cat.label}
+          <p className="eyebrow" style={{ marginBottom: 10 }}>{cat.description}</p>
+          <h1 style={{ fontSize: "2.5rem", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "0.5rem" }}>
+            {cat.label} Dupes
           </h1>
-          <p style={{ color: "var(--muted)", fontFamily: "system-ui, sans-serif", marginBottom: "1.5rem" }}>
-            {cat.description} — {products.length} products, alternatives, and dupes
+          <p style={{ color: "var(--muted)", marginBottom: "1.5rem", fontSize: "0.95rem" }}>
+            {products.length} products, alternatives &amp; dupes
           </p>
           <div className="max-w-xl">
             <SearchBar placeholder={`Search ${cat.label.toLowerCase()} products...`} />
@@ -73,12 +70,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Subcategory pills */}
         <div className="flex flex-wrap gap-2 mb-10">
-          <span className="px-4 py-2 rounded-full text-sm font-semibold" style={{ background: cat.color, color: "#fff", fontFamily: "system-ui, sans-serif" }}>All</span>
+          <span className="px-4 py-2 text-sm font-semibold" style={{ background: "var(--foreground)", color: "#fff", borderRadius: 999 }}>All</span>
           {cat.subcategories.map((sub) => (
-            <button key={sub} className="px-4 py-2 rounded-full text-sm font-medium transition-all"
-              style={{ background: cat.bgColor, color: cat.color, border: `1px solid ${cat.color}30`, fontFamily: "system-ui, sans-serif", cursor: "pointer" }}>
+            <Link key={sub} href={`/search?q=${encodeURIComponent(sub)}`} className="no-underline px-4 py-2 text-sm font-medium transition-all"
+              style={{ background: "#fff", color: "var(--foreground)", border: "1px solid var(--border-strong)", borderRadius: 999 }}>
               {sub}
-            </button>
+            </Link>
           ))}
         </div>
 
@@ -89,21 +86,20 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </div>
         ) : (
           <div className="text-center py-20">
-            <p style={{ fontSize: "3rem", marginBottom: "1rem" }}>{cat.icon}</p>
-            <h3 style={{ fontFamily: "Georgia, serif", fontSize: "1.35rem" }}>More {cat.label} coming soon</h3>
+            <h3 style={{ fontSize: "1.35rem", fontWeight: 600 }}>More {cat.label} coming soon</h3>
           </div>
         )}
 
         {/* SEO links */}
         <div className="mt-16 pt-10" style={{ borderTop: "1px solid var(--border)" }}>
-          <h2 style={{ fontFamily: "Georgia, serif", fontSize: "1.25rem", fontWeight: 700, marginBottom: "1rem" }}>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: 600, marginBottom: "1rem" }}>
             Popular {cat.label} Guides
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {cat.subcategories.map((sub) => (
               <Link key={sub} href={`/search?q=best+${sub.toLowerCase()}+alternatives`}
-                className="no-underline p-3 rounded-xl text-sm font-medium"
-                style={{ background: cat.bgColor, color: cat.color, fontFamily: "system-ui, sans-serif" }}>
+                className="no-underline p-3 text-sm font-medium"
+                style={{ background: "#fff", color: "var(--foreground)", border: "1px solid var(--border)" }}>
                 Best {sub} Alternatives →
               </Link>
             ))}

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import Logo from "./Logo";
 
 const LINKS = [
   { href: "/category/beauty", label: "Beauty" },
@@ -17,11 +18,9 @@ export default function Nav() {
     <nav style={{ background: "#fff", borderBottom: "1px solid var(--border)" }} className="sticky top-0 z-50 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between" style={{ height: 64 }}>
-          {/* Wordmark */}
+          {/* Logo */}
           <Link href="/" className="no-underline">
-            <span style={{ fontSize: "1.5rem", fontWeight: 700, letterSpacing: "0.02em", color: "var(--foreground)", fontFamily: "var(--font-sans)" }}>
-              DUPEDOSE
-            </span>
+            <Logo size={28} />
           </Link>
 
           {/* Desktop links */}

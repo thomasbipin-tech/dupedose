@@ -17,11 +17,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Header */}
       <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "var(--rose)", fontFamily: "system-ui, sans-serif" }}>
-          DupeDose Search
-        </p>
-        <h1 style={{ fontSize: "2rem", fontFamily: "Georgia, serif", fontWeight: 700, marginBottom: "1rem" }}>
-          {query ? `Results for "${query}"` : "Discover Products"}
+        <p className="eyebrow mb-1">Search</p>
+        <h1 style={{ fontSize: "2rem", fontWeight: 600, marginBottom: "1rem", letterSpacing: "-0.01em" }}>
+          {query ? `Results for "${query}"` : "Discover dupes"}
         </h1>
         <div className="max-w-2xl">
           <SearchBar defaultValue={query} />
@@ -35,8 +33,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <div className="flex flex-wrap gap-2">
             {POPULAR_SEARCHES.map((s) => (
               <Link key={s} href={`/search?q=${encodeURIComponent(s)}`}
-                className="no-underline px-3 py-1.5 rounded-full text-sm transition-all"
-                style={{ background: "var(--rose-light)", color: "var(--rose-dark)", fontFamily: "system-ui, sans-serif", border: "1px solid rgba(201,97,122,0.2)" }}>
+                className="no-underline px-3 py-1.5 text-sm transition-all"
+                style={{ background: "#fff", color: "var(--foreground)", border: "1px solid var(--border-strong)", borderRadius: 999 }}>
                 {s}
               </Link>
             ))}
