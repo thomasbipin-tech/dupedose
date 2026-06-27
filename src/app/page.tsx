@@ -12,57 +12,22 @@ export default async function HomePage() {
   return (
     <>
       {/* ── HERO ── */}
-      <section
-        style={{
-          background: "linear-gradient(160deg, #1a0a12 0%, #2c0e1e 50%, #1a1a2c 100%)",
-          minHeight: "calc(100vh - 64px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-          overflow: "hidden",
-        }}>
-        {/* Decorative orbs */}
-        <div style={{ position: "absolute", top: "15%", left: "8%", width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,97,122,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: "20%", right: "5%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", top: "40%", right: "20%", width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle, rgba(91,33,182,0.15) 0%, transparent 70%)", pointerEvents: "none" }} />
-
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ position: "relative", zIndex: 1 }}>
-          {/* Eyebrow */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 fade-up"
-            style={{ background: "rgba(201,97,122,0.15)", border: "1px solid rgba(201,97,122,0.3)" }}>
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--rose)", display: "inline-block" }} />
-            <span style={{ color: "var(--rose-light)", fontSize: "0.8rem", fontFamily: "system-ui, sans-serif", letterSpacing: "0.05em" }}>
-              AI-Powered Beauty Discovery
-            </span>
-          </div>
-
-          <h1 className="fade-up fade-up-delay-1" style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", fontWeight: 700, color: "#fff", lineHeight: 1.1, marginBottom: "1.25rem", fontFamily: "Georgia, serif" }}>
-            Find your perfect
-            <br />
-            <span className="shimmer-text">beauty match.</span>
+      <section style={{ background: "var(--background-alt)", borderBottom: "1px solid var(--border)" }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ paddingTop: "5.5rem", paddingBottom: "5.5rem" }}>
+          <p className="eyebrow fade-up" style={{ marginBottom: 18 }}>AI Dupe Discovery · Beauty · Hair · Jewelry</p>
+          <h1 className="fade-up fade-up-delay-1" style={{ fontSize: "clamp(2.4rem, 6vw, 4.25rem)", fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", marginBottom: "1.1rem" }}>
+            Smell, look &amp; glow expensive — <span className="shimmer-text">for less.</span>
           </h1>
-
-          <p className="fade-up fade-up-delay-2" style={{ fontSize: "1.15rem", color: "rgba(255,255,255,0.6)", marginBottom: "2.5rem", fontFamily: "system-ui, sans-serif", maxWidth: 560, margin: "0 auto 2.5rem" }}>
-            Tell us what luxury product, celebrity look, or ingredient you want — we&apos;ll find the best alternatives, dupes, and recommendations.
+          <p className="fade-up fade-up-delay-2" style={{ fontSize: "1.08rem", color: "var(--muted)", maxWidth: 560, margin: "0 auto 2.25rem", lineHeight: 1.6 }}>
+            Search any luxury or viral product. We find the best affordable dupes — ranked by match score, with the reasoning behind every pick.
           </p>
-
-          {/* Search */}
           <div className="fade-up fade-up-delay-3 max-w-2xl mx-auto mb-6">
             <SearchBar large />
           </div>
-
-          {/* Popular searches */}
           <div className="flex flex-wrap gap-2 justify-center">
-            {POPULAR_SEARCHES.map((s) => (
-              <Link key={s} href={`/search?q=${encodeURIComponent(s)}`}
-                className="no-underline px-3 py-1.5 rounded-full text-xs transition-all"
-                style={{
-                  background: "rgba(255,255,255,0.06)",
-                  color: "rgba(255,255,255,0.55)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  fontFamily: "system-ui, sans-serif",
-                }}>
+            {POPULAR_SEARCHES.slice(0, 6).map((s) => (
+              <Link key={s} href={`/search?q=${encodeURIComponent(s)}`} className="no-underline"
+                style={{ padding: "6px 13px", fontSize: "0.76rem", color: "var(--foreground)", background: "#fff", border: "1px solid var(--border-strong)", borderRadius: 999 }}>
                 {s}
               </Link>
             ))}
@@ -71,116 +36,88 @@ export default async function HomePage() {
       </section>
 
       {/* ── CATEGORIES ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "var(--rose)", fontFamily: "system-ui, sans-serif" }}>Explore</p>
-            <h2 style={{ fontSize: "1.75rem", fontFamily: "Georgia, serif", fontWeight: 700 }}>Three categories. One engine.</h2>
-          </div>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ paddingTop: "4rem", paddingBottom: "1rem" }}>
+        <div className="flex items-end justify-between mb-7">
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 600 }}>Shop by category</h2>
+          <Link href="/search" className="no-underline uline" style={{ fontSize: "0.82rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--foreground)" }}>View all</Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {CATEGORIES.map((cat) => (
             <Link key={cat.slug} href={`/category/${cat.slug}`} className="no-underline group">
-              <div className="rounded-2xl p-8 transition-all product-card" style={{ background: cat.bgColor, border: `1px solid ${cat.color}22` }}>
-                <div className="text-5xl mb-4" style={{ color: cat.color }}>{cat.icon}</div>
-                <h3 style={{ fontSize: "1.35rem", fontFamily: "Georgia, serif", fontWeight: 700, color: "var(--foreground)", marginBottom: "0.5rem" }}>{cat.label}</h3>
-                <p style={{ fontSize: "0.9rem", color: "var(--muted)", fontFamily: "system-ui, sans-serif", marginBottom: "1.25rem" }}>{cat.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {cat.subcategories.slice(0, 4).map((sub) => (
-                    <span key={sub} className="px-2.5 py-1 rounded-full text-xs" style={{ background: `${cat.color}18`, color: cat.color, fontFamily: "system-ui, sans-serif" }}>{sub}</span>
-                  ))}
-                </div>
-                <div className="mt-4 flex items-center gap-1.5 text-sm font-semibold" style={{ color: cat.color, fontFamily: "system-ui, sans-serif" }}>
-                  Explore {cat.label} <span>→</span>
-                </div>
+              <div className="product-card p-7" style={{ background: "#fff", border: "1px solid var(--border)" }}>
+                <div style={{ fontSize: "2rem", marginBottom: 14 }}>{cat.icon}</div>
+                <h3 style={{ fontSize: "1.2rem", fontWeight: 600, marginBottom: 6 }}>{cat.label}</h3>
+                <p style={{ fontSize: "0.88rem", color: "var(--muted)", marginBottom: 16, lineHeight: 1.55 }}>{cat.description}</p>
+                <span className="uline" style={{ fontSize: "0.8rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600 }}>Explore {cat.label} →</span>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
+      {/* ── TRENDING ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ paddingTop: "3.5rem" }}>
+        <div className="flex items-end justify-between mb-7">
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 600 }}>Trending dupes</h2>
+          <Link href="/search" className="no-underline uline" style={{ fontSize: "0.82rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--foreground)" }}>See more</Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          {trending.slice(0, 8).map((p) => <ProductCard key={p.id} product={p} />)}
+        </div>
+      </section>
+
       {/* ── HOW IT WORKS ── */}
-      <section style={{ background: "var(--hero-bg)" }} className="py-16">
+      <section style={{ background: "var(--background-dark)", marginTop: "4rem" }} className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--gold)", fontFamily: "system-ui, sans-serif" }}>The DupeDose Method</p>
-            <h2 style={{ fontSize: "1.75rem", fontFamily: "Georgia, serif", fontWeight: 700, color: "#fff" }}>From search to perfect match</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <h2 className="text-center" style={{ fontSize: "1.6rem", fontWeight: 600, color: "#fff", marginBottom: 40 }}>How DupeDose works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { step: "01", title: "Search or Describe", body: "Enter a product name, brand, ingredient, celebrity, or describe your goal.", icon: "🔍" },
-              { step: "02", title: "AI Understands Intent", body: "Our engine parses your query across 50,000+ products and attributes.", icon: "✦" },
-              { step: "03", title: "See Ranked Matches", body: "Products ranked by match score — Premium, Similar, and Budget alternatives.", icon: "◈" },
-              { step: "04", title: "Compare & Buy", body: "Side-by-side comparison, ingredient analysis, and affiliate links.", icon: "◇" },
-            ].map(({ step, title, body, icon }) => (
-              <div key={step} className="text-center p-6">
-                <div className="text-3xl mb-3">{icon}</div>
-                <p className="text-xs font-mono mb-2" style={{ color: "var(--gold)", opacity: 0.6 }}>{step}</p>
-                <h3 className="font-semibold mb-2" style={{ color: "#fff", fontFamily: "Georgia, serif", fontSize: "1.05rem" }}>{title}</h3>
-                <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.875rem", fontFamily: "system-ui, sans-serif", lineHeight: 1.6 }}>{body}</p>
+              { n: "01", t: "Search anything", b: "A luxury product, a viral item, a brand, an ingredient, or a look." },
+              { n: "02", t: "We find real dupes", b: "Our engine surfaces genuine alternatives, each scored with the reasoning why." },
+              { n: "03", t: "Compare & shop", b: "See prices side by side and buy at Amazon, Sephora, Ulta and more." },
+            ].map(({ n, t, b }) => (
+              <div key={n}>
+                <p style={{ fontSize: "0.8rem", letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", marginBottom: 10 }}>{n}</p>
+                <h3 style={{ fontSize: "1.12rem", fontWeight: 600, color: "#fff", marginBottom: 8 }}>{t}</h3>
+                <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>{b}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── TRENDING PRODUCTS ── */}
+      {/* ── QUIZ BANNER ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex items-end justify-between mb-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-10 md:p-12" style={{ border: "1px solid var(--border-strong)" }}>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "var(--rose)", fontFamily: "system-ui, sans-serif" }}>Most Searched</p>
-            <h2 style={{ fontSize: "1.75rem", fontFamily: "Georgia, serif", fontWeight: 700 }}>Trending right now</h2>
-          </div>
-          <Link href="/search" className="text-sm font-medium no-underline" style={{ color: "var(--rose)", fontFamily: "system-ui, sans-serif" }}>
-            View all →
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-          {trending.slice(0, 6).map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
-
-      {/* ── AI BANNER ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="rounded-3xl p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8"
-          style={{ background: "linear-gradient(135deg, #2c0e1e 0%, #1a1a2c 100%)", border: "1px solid rgba(255,255,255,0.08)" }}>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--gold)", fontFamily: "system-ui, sans-serif" }}>Personalized Beauty AI</p>
-            <h2 style={{ fontSize: "1.75rem", fontFamily: "Georgia, serif", fontWeight: 700, color: "#fff", marginBottom: "0.75rem" }}>
-              Get your free beauty profile
-            </h2>
-            <p style={{ color: "rgba(255,255,255,0.55)", fontFamily: "system-ui, sans-serif", fontSize: "0.95rem", maxWidth: 420 }}>
-              Answer 5 questions about your hair type, skin concerns, and budget. We&apos;ll build a personalized routine with exact product recommendations.
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 8 }}>Get your free beauty profile</h2>
+            <p style={{ color: "var(--muted)", fontSize: "0.95rem", maxWidth: 440, lineHeight: 1.6 }}>
+              Answer 5 quick questions — we&apos;ll build a personalized routine with exact product picks.
             </p>
           </div>
-          <Link href="/quiz"
-            className="no-underline px-8 py-4 rounded-2xl font-semibold text-center flex-shrink-0 transition-all active:scale-95"
-            style={{ background: "var(--rose)", color: "#fff", fontFamily: "system-ui, sans-serif", fontSize: "1rem", minWidth: 180 }}>
-            Take the Quiz →
+          <Link href="/quiz" className="no-underline btn-primary text-center" style={{ padding: "14px 30px", fontSize: "0.85rem", letterSpacing: "0.06em", textTransform: "uppercase", minWidth: 180 }}>
+            Take the Quiz
           </Link>
         </div>
       </section>
 
-      {/* ── SEO CONTENT BLOCKS ── */}
-      <section style={{ background: "rgba(0,0,0,0.02)", borderTop: "1px solid var(--border)" }} className="py-16">
+      {/* ── SEO GUIDES ── */}
+      <section style={{ background: "var(--background-alt)", borderTop: "1px solid var(--border)" }} className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-center mb-10" style={{ fontSize: "1.5rem", fontFamily: "Georgia, serif", fontWeight: 700 }}>Popular Discovery Guides</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <h2 className="text-center" style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: 32 }}>Popular dupe guides</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              ["Best Olaplex Alternatives", "/search?q=olaplex+alternatives"],
-              ["Luxury Makeup Dupes", "/search?q=luxury+makeup+dupes"],
-              ["Cartier Jewelry Alternatives", "/search?q=cartier+alternatives"],
-              ["Best Products Under $50", "/search?q=best+products+under+50"],
-              ["Clean Beauty Moisturizers", "/search?q=clean+beauty+moisturizer"],
-              ["Best Shampoo for Curly Hair", "/search?q=best+shampoo+curly+hair"],
-              ["Jewelry Under $200", "/search?q=jewelry+under+200"],
-              ["Celebrity Hair Routines", "/search?q=celebrity+hair+routine"],
+              ["Best Olaplex Dupes", "/search?q=olaplex"],
+              ["Luxury Makeup Dupes", "/search?q=luxury+makeup"],
+              ["Cartier Alternatives", "/search?q=cartier"],
+              ["Dupes Under $50", "/search?q=under+50"],
+              ["Clean Moisturizers", "/search?q=moisturizer"],
+              ["Perfume Dupes", "/search?q=perfume"],
+              ["Jewelry Under $200", "/search?q=jewelry"],
+              ["Viral TikTok Dupes", "/search?q=viral"],
             ].map(([label, href]) => (
-              <Link key={label as string} href={href as string}
-                className="no-underline p-4 rounded-xl transition-all text-sm font-medium"
-                style={{ background: "#fff", border: "1px solid var(--border)", color: "var(--foreground)", fontFamily: "system-ui, sans-serif" }}>
+              <Link key={label as string} href={href as string} className="no-underline"
+                style={{ padding: "14px 16px", background: "#fff", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "0.85rem", fontWeight: 500 }}>
                 {label} →
               </Link>
             ))}

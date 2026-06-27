@@ -1,0 +1,20 @@
+# DupeDose
+
+> AI-powered discovery engine for affordable beauty, hair care, and jewelry dupes. Search any luxury or viral product and get the best alternatives, ranked by a match score with the reasoning behind each pick.
+
+DupeDose helps shoppers find cheaper alternatives ("dupes") to luxury and viral beauty, hair, and jewelry products. Every recommendation includes a match score and a plain-language reason explaining why it's a good alternative (shared ingredients/actives, comparable finish or performance, price savings). Links go to retailers (Amazon, Sephora, Ulta, Target, and brand sites) where each product can be purchased.
+
+## Categories
+- Beauty: skincare (moisturizers, serums, cleansers, sunscreen), makeup (foundation, concealer, lipstick, mascara, blush, bronzer, brows), and fragrance.
+- Hair Care: treatments, shampoos, oils, masks, styling tools.
+- Jewelry: bracelets, necklaces, rings, earrings (fine and demi-fine).
+
+## Key pages
+- Search: /search?q=QUERY — find dupes for any product
+- Categories: /category/beauty, /category/hair, /category/jewelry
+- Product pages: /product/SLUG — original product + ranked alternatives with reasons
+- Compare: /compare — side-by-side product comparison
+
+## Notes
+- Prices shown are reference estimates and may change; confirm on the retailer's site.
+- DupeDose earns affiliate commissions from qualifying purchases (Amazon Associate + others), at no extra cost to users.

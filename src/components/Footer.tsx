@@ -1,64 +1,39 @@
 import Link from "next/link";
 
 export default function Footer() {
+  const col = (title: string, links: [string, string][]) => (
+    <div>
+      <p className="eyebrow" style={{ marginBottom: 14 }}>{title}</p>
+      {links.map(([l, h]) => (
+        <Link key={h} href={h} className="block no-underline uline" style={{ width: "fit-content", fontSize: "0.85rem", color: "var(--foreground)", marginBottom: 9 }}>
+          {l}
+        </Link>
+      ))}
+    </div>
+  );
+
   return (
-    <footer style={{ background: "var(--hero-bg)", borderTop: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}
-      className="py-12 mt-20">
+    <footer style={{ background: "#fff", borderTop: "1px solid var(--border)" }} className="pt-14 pb-10 mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           <div>
-            <p className="text-2xl font-bold mb-3" style={{ color: "var(--gold)", fontFamily: "Georgia, serif" }}>
-              Dupe<span style={{ color: "#fff" }}>Dose</span>
-            </p>
-            <p className="text-xs leading-relaxed" style={{ fontFamily: "system-ui, sans-serif" }}>
-              The AI-powered beauty and luxury alternative engine.
+            <p style={{ fontSize: "1.35rem", fontWeight: 700, letterSpacing: "0.02em", marginBottom: 10 }}>DUPEDOSE</p>
+            <p style={{ fontSize: "0.85rem", color: "var(--muted)", lineHeight: 1.6, maxWidth: 220 }}>
+              The smart way to find affordable dupes for the beauty, hair, and jewelry you love.
             </p>
           </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "system-ui, sans-serif" }}>Discover</p>
-            {[["Beauty", "/category/beauty"], ["Hair Care", "/category/hair"], ["Jewelry", "/category/jewelry"]].map(([l, h]) => (
-              <Link key={h} href={h} className="block text-sm no-underline mb-2 transition-colors"
-                style={{ color: "rgba(255,255,255,0.5)", fontFamily: "system-ui, sans-serif" }}>
-                {l}
-              </Link>
-            ))}
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "system-ui, sans-serif" }}>Tools</p>
-            {[["Compare Products", "/compare"], ["Beauty Quiz", "/quiz"], ["Find My Dupe", "/search"]].map(([l, h]) => (
-              <Link key={h} href={h} className="block text-sm no-underline mb-2"
-                style={{ color: "rgba(255,255,255,0.5)", fontFamily: "system-ui, sans-serif" }}>
-                {l}
-              </Link>
-            ))}
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "system-ui, sans-serif" }}>Popular</p>
-            {[["Best Olaplex Dupes", "/search?q=olaplex+dupes"], ["Cartier Alternatives", "/search?q=cartier+alternatives"], ["Luxury Skincare Dupes", "/search?q=luxury+skincare+dupes"]].map(([l, h]) => (
-              <Link key={h} href={h} className="block text-sm no-underline mb-2"
-                style={{ color: "rgba(255,255,255,0.5)", fontFamily: "system-ui, sans-serif" }}>
-                {l}
-              </Link>
-            ))}
-          </div>
+          {col("Shop", [["Beauty", "/category/beauty"], ["Hair", "/category/hair"], ["Jewelry", "/category/jewelry"]])}
+          {col("Tools", [["Find My Dupe", "/search"], ["Compare", "/compare"], ["Beauty Quiz", "/quiz"]])}
+          {col("Company", [["About", "/about"], ["Affiliate Disclosure", "/disclosure"], ["Privacy Policy", "/privacy"]])}
         </div>
-        <div className="border-t border-white/10 pt-6 flex flex-col gap-4">
-          {/* Required Amazon Associates disclosure — clear & conspicuous, site-wide */}
-          <p className="text-xs leading-relaxed" style={{ fontFamily: "system-ui, sans-serif", color: "rgba(255,255,255,0.55)" }}>
-            <strong style={{ color: "rgba(255,255,255,0.75)" }}>As an Amazon Associate, DupeDose earns from qualifying purchases.</strong>{" "}
-            We also participate in other affiliate programs and may earn a commission when you buy through links on our site, at no extra cost to you.
-            Prices are reference estimates that may vary — confirm the current price on the retailer&rsquo;s website. We do not display live Amazon prices.
+
+        <div style={{ borderTop: "1px solid var(--border)", paddingTop: 22 }} className="flex flex-col gap-4">
+          <p style={{ fontSize: "0.74rem", color: "var(--muted)", lineHeight: 1.6, maxWidth: 760 }}>
+            <strong style={{ color: "var(--foreground)" }}>As an Amazon Associate, DupeDose earns from qualifying purchases.</strong>{" "}
+            We also participate in other affiliate programs and may earn a commission, at no extra cost to you. Prices are
+            reference estimates that may vary — confirm the current price on the retailer&rsquo;s website.
           </p>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
-            <p className="text-xs" style={{ fontFamily: "system-ui, sans-serif" }}>© 2026 DupeDose. All rights reserved.</p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              {[["About", "/about"], ["Affiliate Disclosure", "/disclosure"], ["Privacy Policy", "/privacy"]].map(([l, h]) => (
-                <Link key={h} href={h} className="text-xs no-underline" style={{ fontFamily: "system-ui, sans-serif", color: "rgba(255,255,255,0.5)" }}>
-                  {l}
-                </Link>
-              ))}
-            </div>
-          </div>
+          <p style={{ fontSize: "0.74rem", color: "var(--muted-2)" }}>© 2026 DupeDose. All rights reserved.</p>
         </div>
       </div>
     </footer>

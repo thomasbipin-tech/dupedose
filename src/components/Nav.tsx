@@ -2,71 +2,60 @@
 import Link from "next/link";
 import { useState } from "react";
 
+const LINKS = [
+  { href: "/category/beauty", label: "Beauty" },
+  { href: "/category/hair", label: "Hair" },
+  { href: "/category/jewelry", label: "Jewelry" },
+  { href: "/compare", label: "Compare" },
+  { href: "/quiz", label: "Quiz" },
+];
+
 export default function Nav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav style={{ background: "var(--hero-bg)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
-      className="sticky top-0 z-50 w-full">
+    <nav style={{ background: "#fff", borderBottom: "1px solid var(--border)" }} className="sticky top-0 z-50 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 no-underline">
-            <span className="text-2xl font-bold" style={{ color: "var(--gold)", letterSpacing: "-0.02em", fontFamily: "Georgia, serif" }}>
-              Dupe<span style={{ color: "#fff" }}>Dose</span>
+        <div className="flex items-center justify-between" style={{ height: 64 }}>
+          {/* Wordmark */}
+          <Link href="/" className="no-underline">
+            <span style={{ fontSize: "1.5rem", fontWeight: 700, letterSpacing: "0.02em", color: "var(--foreground)", fontFamily: "var(--font-sans)" }}>
+              DUPEDOSE
             </span>
           </Link>
 
           {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-8">
-            {[
-              { href: "/category/beauty", label: "Beauty" },
-              { href: "/category/hair", label: "Hair Care" },
-              { href: "/category/jewelry", label: "Jewelry" },
-              { href: "/compare", label: "Compare" },
-              { href: "/quiz", label: "Beauty Quiz" },
-            ].map(({ href, label }) => (
-              <Link key={href} href={href}
-                className="text-sm no-underline transition-colors"
-                style={{ color: "rgba(255,255,255,0.7)", fontFamily: "system-ui, sans-serif" }}
-                onMouseEnter={e => (e.currentTarget.style.color = "var(--gold)")}
-                onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}>
+          <div className="hidden md:flex items-center gap-9">
+            {LINKS.map(({ href, label }) => (
+              <Link key={href} href={href} className="no-underline uline"
+                style={{ fontSize: "0.82rem", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--foreground)" }}>
                 {label}
               </Link>
             ))}
           </div>
 
           {/* CTA */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/search"
-              className="px-4 py-2 rounded-full text-sm font-medium no-underline transition-all"
-              style={{ background: "var(--rose)", color: "#fff", fontFamily: "system-ui, sans-serif" }}>
+          <div className="hidden md:flex items-center">
+            <Link href="/search" className="no-underline btn-primary"
+              style={{ padding: "9px 18px", fontSize: "0.78rem", letterSpacing: "0.08em", textTransform: "uppercase" }}>
               Find My Dupe
             </Link>
           </div>
 
-          {/* Mobile hamburger */}
+          {/* Mobile toggle */}
           <button className="md:hidden flex flex-col gap-1.5 p-2" onClick={() => setOpen(!open)} aria-label="Menu">
-            <span className="block w-6 h-0.5" style={{ background: open ? "var(--gold)" : "rgba(255,255,255,0.7)" }} />
-            <span className="block w-6 h-0.5" style={{ background: open ? "var(--gold)" : "rgba(255,255,255,0.7)" }} />
-            <span className="block w-6 h-0.5" style={{ background: open ? "var(--gold)" : "rgba(255,255,255,0.7)" }} />
+            <span className="block" style={{ width: 22, height: 1.5, background: "var(--foreground)" }} />
+            <span className="block" style={{ width: 22, height: 1.5, background: "var(--foreground)" }} />
+            <span className="block" style={{ width: 22, height: 1.5, background: "var(--foreground)" }} />
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
       {open && (
-        <div style={{ background: "var(--hero-bg)", borderTop: "1px solid rgba(255,255,255,0.08)" }} className="md:hidden px-4 py-4 flex flex-col gap-4">
-          {[
-            { href: "/category/beauty", label: "Beauty" },
-            { href: "/category/hair", label: "Hair Care" },
-            { href: "/category/jewelry", label: "Jewelry" },
-            { href: "/compare", label: "Compare" },
-            { href: "/quiz", label: "Beauty Quiz" },
-            { href: "/search", label: "Find My Dupe →" },
-          ].map(({ href, label }) => (
-            <Link key={href} href={href} className="text-sm no-underline"
-              style={{ color: "rgba(255,255,255,0.8)", fontFamily: "system-ui, sans-serif" }}
+        <div style={{ background: "#fff", borderTop: "1px solid var(--border)" }} className="md:hidden px-5 py-4 flex flex-col gap-4">
+          {[...LINKS, { href: "/search", label: "Find My Dupe" }].map(({ href, label }) => (
+            <Link key={href} href={href} className="no-underline"
+              style={{ fontSize: "0.85rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--foreground)" }}
               onClick={() => setOpen(false)}>
               {label}
             </Link>

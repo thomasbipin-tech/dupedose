@@ -23,8 +23,8 @@ export default function SearchBar({ large = false, placeholder, defaultValue = "
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="relative search-glow rounded-2xl transition-all"
-        style={{ background: "#fff", border: "2px solid var(--border)" }}>
+      <div className="relative search-glow transition-all"
+        style={{ background: "#fff", border: "1px solid var(--border-strong)", borderRadius: "var(--r-md)" }}>
         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -45,13 +45,8 @@ export default function SearchBar({ large = false, placeholder, defaultValue = "
         />
         <button
           type="submit"
-          className="absolute right-3 top-1/2 -translate-y-1/2 px-5 py-2.5 rounded-xl font-semibold transition-all active:scale-95"
-          style={{
-            background: "var(--rose)",
-            color: "#fff",
-            fontFamily: "system-ui, sans-serif",
-            fontSize: "0.9rem",
-          }}>
+          className="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2.5 btn-primary"
+          style={{ fontSize: "0.82rem", letterSpacing: "0.06em", textTransform: "uppercase" }}>
           Search
         </button>
       </div>

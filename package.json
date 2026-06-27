@@ -11,7 +11,8 @@
     "ingest": "node --env-file=.env.local node_modules/.bin/tsx scripts/ingest.ts",
     "refresh-prices": "node --env-file=.env.local node_modules/.bin/tsx scripts/refresh-prices.ts",
     "check-db": "node --env-file=.env.local node_modules/.bin/tsx scripts/check-db.ts",
-    "gen-images": "node node_modules/.bin/tsx scripts/gen-images.ts"
+    "gen-images": "node node_modules/.bin/tsx scripts/gen-images.ts",
+    "build-catalog": "node --env-file=.env.local node_modules/.bin/tsx scripts/build-catalog.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
