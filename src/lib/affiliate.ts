@@ -9,28 +9,28 @@ import type { Retailer } from "./types";
 const AMAZON_TAG = process.env.AMAZON_ASSOC_TAG;
 const SKIMLINKS_ID = process.env.SKIMLINKS_ID;
 
+/** Wrap any merchant URL in a Skimlinks deep link (server-side redirect-safe). */
+function skimlinksWrap(rawUrl: string): string {
+  if (!SKIMLINKS_ID) return rawUrl;
+  return `https://go.skimresources.com/?id=${encodeURIComponent(SKIMLINKS_ID)}&xs=1&url=${encodeURIComponent(rawUrl)}`;
+}
+
 export function buildAffiliateUrl(rawUrl: string, retailer: Retailer): string {
-  switch (retailer.network) {
-    case "amazon": {
-      if (!AMAZON_TAG) return rawUrl;
-      const sep = rawUrl.includes("?") ? "&" : "?";
-      return `${rawUrl}${sep}tag=${encodeURIComponent(AMAZON_TAG)}`;
-    }
-    case "skimlinks": {
-      // Skimlinks auto-affiliates merchants (Sephora/Ulta/Target/Nordstrom…)
-      // without per-merchant approval. Without an ID, return the raw URL.
-      if (!SKIMLINKS_ID) return rawUrl;
-      return `https://go.skimresources.com/?id=${encodeURIComponent(SKIMLINKS_ID)}&xs=1&url=${encodeURIComponent(rawUrl)}`;
-    }
-    case "rakuten":
-    case "impact":
-      // Deep-link templates plug in here once those networks approve the
-      // publisher account. Until then, send users straight to the retailer.
-      return rawUrl;
-    case "direct":
-    default:
-      return rawUrl;
+  // Amazon uses our own Associates tag (Amazon is NOT in the Skimlinks network).
+  if (retailer.network === "amazon") {
+    if (!AMAZON_TAG) return rawUrl;
+    const sep = rawUrl.includes("?") ? "&" : "?";
+    return `${rawUrl}${sep}tag=${encodeURIComponent(AMAZON_TAG)}`;
   }
+
+  // If you later get a DIRECT Rakuten/Impact integration, build those deep
+  // links here (don't double-dip by also sending them through Skimlinks).
+
+  // Everything else — Sephora, Ulta, Target, Nordstrom, and brand-direct sites
+  // (Mejuri, Missoma, BaubleBar, etc.) — is monetized through Skimlinks, which
+  // covers thousands of merchants with no per-merchant approval. Falls back to
+  // the raw URL when SKIMLINKS_ID isn't set, or if the merchant isn't covered.
+  return skimlinksWrap(rawUrl);
 }
 
 /** FTC + Amazon Associates affiliate disclosure copy, reused across the UI. */
