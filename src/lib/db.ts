@@ -16,9 +16,17 @@ import type {
   Category,
   AlternativeProduct,
   Offer,
+  RetailerNetwork,
 } from "./types";
 import { buildAffiliateUrl } from "./affiliate";
 import { RETAILERS } from "./data";
+
+// Build the affiliate URL at REQUEST time from the live env vars (Amazon tag,
+// Skimlinks id) — never trust a value baked into the DB at seed time, so the
+// tag updates the moment the env var changes (no re-seed needed).
+function liveAffiliateUrl(rawUrl: string, retailerId: string, network: string, name: string): string {
+  return buildAffiliateUrl(rawUrl, { id: retailerId, name, homepage: "", network: (network as RetailerNetwork) ?? "direct" });
+}
 
 // ── snake_case row → camelCase Product mapper ──────────────────
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -167,7 +175,7 @@ export async function getProductOffers(productId: string): Promise<Offer[]> {
       retailerName: r.retailer?.name ?? r.retailer_id,
       network: r.retailer?.network ?? "direct",
       rawUrl: r.raw_url,
-      affiliateUrl: r.affiliate_url ?? r.raw_url,
+      affiliateUrl: liveAffiliateUrl(r.raw_url, r.retailer_id, r.retailer?.network ?? "direct", r.retailer?.name ?? r.retailer_id),
       price: r.price ? Number(r.price) : undefined,
       currency: r.currency ?? "USD",
       inStock: r.in_stock ?? true,
@@ -199,7 +207,7 @@ export async function getOffer(offerId: string): Promise<Offer | null> {
       retailerName: data.retailer?.name ?? data.retailer_id,
       network: data.retailer?.network ?? "direct",
       rawUrl: data.raw_url,
-      affiliateUrl: data.affiliate_url ?? data.raw_url,
+      affiliateUrl: liveAffiliateUrl(data.raw_url, data.retailer_id, data.retailer?.network ?? "direct", data.retailer?.name ?? data.retailer_id),
       price: data.price ? Number(data.price) : undefined,
       currency: data.currency ?? "USD",
       inStock: data.in_stock ?? true,
