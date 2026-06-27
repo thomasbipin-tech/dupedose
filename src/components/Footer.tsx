@@ -42,11 +42,23 @@ export default function Footer() {
             ))}
           </div>
         </div>
-        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
-          <p className="text-xs" style={{ fontFamily: "system-ui, sans-serif" }}>© 2026 DupeDose. All rights reserved.</p>
-          <Link href="/disclosure" className="text-xs no-underline" style={{ fontFamily: "system-ui, sans-serif", color: "rgba(255,255,255,0.5)" }}>
-            DupeDose earns affiliate commissions from qualifying purchases. Prices for reference only. Affiliate disclosure →
-          </Link>
+        <div className="border-t border-white/10 pt-6 flex flex-col gap-4">
+          {/* Required Amazon Associates disclosure — clear & conspicuous, site-wide */}
+          <p className="text-xs leading-relaxed" style={{ fontFamily: "system-ui, sans-serif", color: "rgba(255,255,255,0.55)" }}>
+            <strong style={{ color: "rgba(255,255,255,0.75)" }}>As an Amazon Associate, DupeDose earns from qualifying purchases.</strong>{" "}
+            We also participate in other affiliate programs and may earn a commission when you buy through links on our site, at no extra cost to you.
+            Prices are reference estimates that may vary — confirm the current price on the retailer&rsquo;s website. We do not display live Amazon prices.
+          </p>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
+            <p className="text-xs" style={{ fontFamily: "system-ui, sans-serif" }}>© 2026 DupeDose. All rights reserved.</p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              {[["About", "/about"], ["Affiliate Disclosure", "/disclosure"], ["Privacy Policy", "/privacy"]].map(([l, h]) => (
+                <Link key={h} href={h} className="text-xs no-underline" style={{ fontFamily: "system-ui, sans-serif", color: "rgba(255,255,255,0.5)" }}>
+                  {l}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </footer>

@@ -33,6 +33,6 @@ export function buildAffiliateUrl(rawUrl: string, retailer: Retailer): string {
   }
 }
 
-/** FTC affiliate disclosure copy, reused across the UI. */
+/** FTC + Amazon Associates affiliate disclosure copy, reused across the UI. */
 export const AFFILIATE_DISCLOSURE =
-  "DupeDose may earn a commission when you buy through links on our site, at no extra cost to you.";
+  "As an Amazon Associate, DupeDose earns from qualifying purchases. We may also earn a commission from other retailers when you buy through these links, at no extra cost to you. Prices are estimates — confirm the current price on the retailer's site.";

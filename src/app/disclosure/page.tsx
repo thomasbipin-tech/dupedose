@@ -15,6 +15,14 @@ export default function DisclosurePage() {
         Affiliate Disclosure
       </h1>
       <div style={{ fontFamily: "system-ui, sans-serif", color: "var(--muted)", lineHeight: 1.8, fontSize: "0.95rem" }}>
+        <p className="mb-4" style={{ color: "var(--foreground)", fontWeight: 600 }}>
+          As an Amazon Associate, DupeDose earns from qualifying purchases.
+        </p>
+        <p className="mb-4">
+          DupeDose is a participant in the Amazon Services LLC Associates Program, an affiliate advertising
+          program designed to provide a means for sites to earn advertising fees by advertising and linking to
+          Amazon.com. We also participate in other affiliate programs (such as Skimlinks, Rakuten, and Impact).
+        </p>
         <p className="mb-4">
           DupeDose is a free product-discovery engine. We help you find alternatives and dupes
           for beauty, hair care, and jewelry products — and we keep the lights on through
