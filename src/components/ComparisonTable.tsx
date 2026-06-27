@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Product, formatPrice } from "@/lib/types";
 
 interface ComparisonTableProps {
@@ -94,6 +95,18 @@ export default function ComparisonTable({ products }: ComparisonTableProps) {
               })}
             </tr>
           ))}
+          {/* View row — link to each product */}
+          <tr style={{ borderTop: "1px solid var(--border)" }}>
+            <td className="px-6 py-5 text-sm font-medium" style={{ color: "var(--muted)", fontFamily: "var(--font-sans)" }}></td>
+            {products.map((p) => (
+              <td key={p.id} className="px-6 py-5 text-center">
+                <Link href={`/product/${p.slug}`} className="no-underline btn-primary inline-block"
+                  style={{ padding: "9px 22px", fontSize: "0.76rem", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  View
+                </Link>
+              </td>
+            ))}
+          </tr>
         </tbody>
       </table>
     </div>
