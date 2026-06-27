@@ -139,13 +139,16 @@ export async function getProductAlternatives(productId: string): Promise<Alterna
       })
       .filter(Boolean) as AlternativeProduct[];
     if (curated.length >= ALT_TARGET || !anchor) return curated.slice(0, ALT_TARGET);
-    // Top up with same-category alternatives so the page feels complete.
+    // Top up ONLY with the same SUBCATEGORY (e.g. lipstick→lipsticks, never
+    // lipstick→serum). Showing fewer, relevant items beats padding with
+    // mismatched ones. Excludes the curated dupes + the original.
     const { data: cand } = await sb
       .from("products")
       .select("*")
       .eq("category", anchor.category)
+      .eq("subcategory", anchor.subcategory)
       .neq("id", productId)
-      .order("rating", { ascending: false })
+      .order("review_count", { ascending: false })
       .limit(20);
     const exclude = new Set(curated.map((c) => c.id));
     const fill = rankCandidates(anchor, (cand ?? []).map(rowToProduct), exclude, ALT_TARGET - curated.length).map((p) => toFallbackAlt(anchor, p));
@@ -162,7 +165,7 @@ export async function getProductAlternatives(productId: string): Promise<Alterna
     .filter(Boolean) as AlternativeProduct[];
   if (curated.length >= ALT_TARGET || !anchor) return curated.slice(0, ALT_TARGET);
   const exclude = new Set(curated.map((c) => c.id));
-  const fill = rankCandidates(anchor, PRODUCTS.filter((p) => p.category === anchor.category), exclude, ALT_TARGET - curated.length).map((p) => toFallbackAlt(anchor, p));
+  const fill = rankCandidates(anchor, PRODUCTS.filter((p) => p.category === anchor.category && p.subcategory === anchor.subcategory), exclude, ALT_TARGET - curated.length).map((p) => toFallbackAlt(anchor, p));
   return [...curated, ...fill];
 }
 

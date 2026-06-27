@@ -2,12 +2,21 @@ import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import ProductCard from "@/components/ProductCard";
 import { CATEGORIES, POPULAR_SEARCHES } from "@/lib/data";
-import { getTrendingProducts } from "@/lib/db";
+import { getTrendingProducts, getProductsByCategory } from "@/lib/db";
+import { Category } from "@/lib/types";
 
 export const revalidate = 3600;
 
 export default async function HomePage() {
   const trending = await getTrendingProducts();
+  // A representative real product image per category for the tile backgrounds.
+  const covers: Record<string, string> = {};
+  await Promise.all(
+    CATEGORIES.map(async (c) => {
+      const ps = await getProductsByCategory(c.slug as Category);
+      covers[c.slug] = ps.find((p) => p.image && /^https?:/.test(p.image))?.image ?? "";
+    })
+  );
 
   return (
     <>
@@ -44,11 +53,24 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {CATEGORIES.map((cat) => (
             <Link key={cat.slug} href={`/category/${cat.slug}`} className="no-underline group">
-              <div className="product-card p-7" style={{ background: "#fff", border: "1px solid var(--border)" }}>
-                <div style={{ fontSize: "2rem", marginBottom: 14 }}>{cat.icon}</div>
-                <h3 style={{ fontSize: "1.2rem", fontWeight: 600, marginBottom: 6 }}>{cat.label}</h3>
-                <p style={{ fontSize: "0.88rem", color: "var(--muted)", marginBottom: 16, lineHeight: 1.55 }}>{cat.description}</p>
-                <span className="uline" style={{ fontSize: "0.8rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600 }}>Explore {cat.label} →</span>
+              <div className="product-card relative overflow-hidden flex flex-col justify-between"
+                style={{ minHeight: 380, background: covers[cat.slug] ? `#eee` : "var(--background-alt)", border: "1px solid var(--border)" }}>
+                {covers[cat.slug] && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={covers[cat.slug]} alt={cat.label} className="pc-img absolute inset-0 w-full h-full" style={{ objectFit: "cover" }} />
+                )}
+                {/* legibility overlay (lighter on the left where text sits) */}
+                <div className="absolute inset-0" style={{ background: "linear-gradient(100deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.7) 38%, rgba(255,255,255,0.15) 70%, rgba(255,255,255,0) 100%)" }} />
+                <div className="relative p-7">
+                  <div className="flex items-center justify-center" style={{ width: 46, height: 46, borderRadius: "50%", background: "#fff", boxShadow: "var(--shadow-sm)", fontSize: "1.2rem", marginBottom: 16 }}>{cat.icon}</div>
+                  <h3 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 6 }}>{cat.label}</h3>
+                  <p style={{ fontSize: "0.9rem", color: "var(--foreground)", maxWidth: 200, lineHeight: 1.5 }}>{cat.description}</p>
+                </div>
+                <div className="relative p-7 pt-0">
+                  <span className="inline-block" style={{ background: "#fff", color: "var(--foreground)", padding: "10px 18px", fontSize: "0.74rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", boxShadow: "var(--shadow-sm)" }}>
+                    Explore {cat.label} →
+                  </span>
+                </div>
               </div>
             </Link>
           ))}
