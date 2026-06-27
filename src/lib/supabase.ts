@@ -23,13 +23,27 @@ export function isSupabaseAdminConfigured() {
   return Boolean(URL && SERVICE_ROLE_KEY);
 }
 
+// supabase-js v2 constructs a realtime client that needs a global WebSocket.
+// Node < 22 (e.g. WSL Node 20) lacks it — supply the `ws` transport. We only
+// use REST, so realtime is never actually opened. Harmless on Node 22+/Vercel.
+function realtimeOpts(): Record<string, unknown> {
+  if (typeof (globalThis as { WebSocket?: unknown }).WebSocket !== "undefined") return {};
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const ws = require("ws");
+    return { realtime: { transport: ws } };
+  } catch {
+    return {};
+  }
+}
+
 let _anon: SupabaseClient | null = null;
 let _admin: SupabaseClient | null = null;
 
 /** Read-only client (anon key). Safe for server components. Null if unconfigured. */
 export function supabaseAnon(): SupabaseClient | null {
   if (!isSupabaseConfigured()) return null;
-  if (!_anon) _anon = createClient(URL!, ANON_KEY!, { auth: { persistSession: false } });
+  if (!_anon) _anon = createClient(URL!, ANON_KEY!, { auth: { persistSession: false }, ...realtimeOpts() });
   return _anon;
 }
 
@@ -39,6 +53,6 @@ export function supabaseAnon(): SupabaseClient | null {
  */
 export function supabaseAdmin(): SupabaseClient | null {
   if (!isSupabaseAdminConfigured()) return null;
-  if (!_admin) _admin = createClient(URL!, SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
+  if (!_admin) _admin = createClient(URL!, SERVICE_ROLE_KEY!, { auth: { persistSession: false }, ...realtimeOpts() });
   return _admin;
 }
