@@ -1,9 +1,11 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import SearchBar from "@/components/SearchBar";
 import { CATEGORIES } from "@/lib/data";
 import { getProductsByCategory } from "@/lib/db";
 import { Category } from "@/lib/types";
+import { absoluteUrl } from "@/lib/site";
 import Link from "next/link";
 
 interface CategoryPageProps {
@@ -16,15 +18,39 @@ export async function generateStaticParams() {
   return CATEGORIES.map((c) => ({ slug: c.slug }));
 }
 
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const cat = CATEGORIES.find((c) => c.slug === slug);
+  if (!cat) return { title: "Category not found" };
+  const title = `${cat.label} Dupes & Affordable Alternatives`;
+  const description = `Discover the best ${cat.label.toLowerCase()} dupes and affordable alternatives — ${cat.description}. Ranked by match score with the reasoning behind each pick.`;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/category/${cat.slug}` },
+    openGraph: { title, description, url: absoluteUrl(`/category/${cat.slug}`), type: "website" },
+  };
+}
+
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
   const cat = CATEGORIES.find((c) => c.slug === slug);
   if (!cat) notFound();
 
   const products = await getProductsByCategory(slug as Category);
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${cat.label} dupes & alternatives`,
+    numberOfItems: products.length,
+    itemListElement: products.slice(0, 30).map((p, i) => ({
+      "@type": "ListItem", position: i + 1, name: `${p.brandName} ${p.name}`, url: absoluteUrl(`/product/${p.slug}`),
+    })),
+  };
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       {/* Hero banner */}
       <div style={{
         background: `linear-gradient(135deg, ${cat.color}22 0%, ${cat.bgColor} 100%)`,

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
@@ -6,6 +7,7 @@ import { CATEGORIES } from "@/lib/data";
 import { getProductBySlug, getProductAlternatives, getProductOffers, getAllProductSlugs } from "@/lib/db";
 import { formatPrice } from "@/lib/types";
 import { productImage } from "@/lib/images";
+import { absoluteUrl, SITE_NAME } from "@/lib/site";
 import { AFFILIATE_DISCLOSURE } from "@/lib/affiliate";
 
 interface ProductPageProps {
@@ -16,6 +18,24 @@ export const revalidate = 3600;
 
 export async function generateStaticParams() {
   return getAllProductSlugs();
+}
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+  if (!product) return { title: "Product not found" };
+  const title = product.isOriginal
+    ? `${product.brandName} ${product.name} — Dupes & Alternatives`
+    : `${product.brandName} ${product.name} — Reviews, Price & Dupes`;
+  const description = `${product.description} Find the best affordable dupes and alternatives to ${product.brandName} ${product.name}, ranked by match score with the reasoning behind each pick.`;
+  const img = productImage(product);
+  return {
+    title,
+    description,
+    alternates: { canonical: `/product/${product.slug}` },
+    openGraph: { title, description, type: "website", url: absoluteUrl(`/product/${product.slug}`), images: [img], siteName: SITE_NAME },
+    twitter: { card: "summary_large_image", title, description, images: [img] },
+  };
 }
 
 function StarRating({ rating, count }: { rating: number; count: number }) {
@@ -53,8 +73,46 @@ export default async function ProductPage({ params }: ProductPageProps) {
     jewelry: "linear-gradient(135deg, #ede9fe 0%, #d4c4f4 100%)",
   };
 
+  // Structured data for Google rich results + AI answer engines.
+  const lowestOffer = offers.reduce<number | null>((min, o) => (o.price != null && (min === null || o.price < min) ? o.price : min), null);
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: `${product.brandName} ${product.name}`,
+      image: absoluteUrl(productImage(product)),
+      description: product.description,
+      brand: { "@type": "Brand", name: product.brandName },
+      category: cat?.label ?? product.category,
+      ...(product.reviewCount > 0 && {
+        aggregateRating: { "@type": "AggregateRating", ratingValue: product.rating, reviewCount: product.reviewCount },
+      }),
+      ...(lowestOffer != null && {
+        offers: { "@type": "AggregateOffer", lowPrice: lowestOffer, priceCurrency: "USD", offerCount: offers.length, availability: "https://schema.org/InStock" },
+      }),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+        { "@type": "ListItem", position: 2, name: cat?.label ?? product.category, item: absoluteUrl(`/category/${product.category}`) },
+        { "@type": "ListItem", position: 3, name: product.name, item: absoluteUrl(`/product/${product.slug}`) },
+      ],
+    },
+    ...(alternatives.length > 0 ? [{
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: `Dupes & alternatives to ${product.brandName} ${product.name}`,
+      itemListElement: alternatives.map((alt, i) => ({
+        "@type": "ListItem", position: i + 1, name: `${alt.brandName} ${alt.name}`, url: absoluteUrl(`/product/${alt.slug}`),
+      })),
+    }] : []),
+  ];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm mb-8" style={{ fontFamily: "system-ui, sans-serif", color: "var(--muted)" }}>
         <Link href="/" className="no-underline hover:underline" style={{ color: "var(--muted)" }}>Home</Link>
