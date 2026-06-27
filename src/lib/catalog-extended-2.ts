@@ -429,10 +429,10 @@ export const EXTRA2_OFFER_SPECS: Record<string, OfferSpec[]> = {
   "mielle-rosemary": [{ retailerId: "target", url: tgt("mielle rosemary mint scalp oil"), price: 10 }, { retailerId: "amazon", url: a("Mielle Rosemary Mint Scalp Oil"), price: 10 }],
 
   "cartier-trinity": [{ retailerId: "amazon", url: a("Cartier Trinity Ring"), price: 1290 }],
-  "mejuri-dome-set": [{ retailerId: "mejuri", url: "https://www.mejuri.com/shop/products/bold-stackers", price: 120 }],
+  "mejuri-dome-set": [{ retailerId: "amazon", url: a("Mejuri bold stackers ring set gold"), price: 120 }],
   "baublebar-trinity": [{ retailerId: "amazon", url: a("BaubleBar interlocking trio ring gold"), price: 42 }],
   "jennifer-fisher-hoops": [{ retailerId: "nordstrom", url: nord("jennifer fisher lilly hoops"), price: 325 }],
-  "mejuri-bold-hoops": [{ retailerId: "mejuri", url: "https://www.mejuri.com/shop/products/bold-hoops", price: 120 }],
+  "mejuri-bold-hoops": [{ retailerId: "amazon", url: a("Mejuri bold hoops gold vermeil"), price: 120 }],
   "baublebar-hoops": [{ retailerId: "amazon", url: a("BaubleBar mini gold hoops"), price: 36 }],
   "kay-tennis": [{ retailerId: "amazon", url: a("Kay diamond tennis necklace 14k"), price: 1995 }],
   "baublebar-tennis": [{ retailerId: "amazon", url: a("BaubleBar cubic zirconia tennis necklace"), price: 58 }],

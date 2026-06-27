@@ -15,6 +15,7 @@ import type {
   Product,
   Category,
   AlternativeProduct,
+  DupeLevel,
   Offer,
   RetailerNetwork,
 } from "./types";
@@ -89,15 +90,47 @@ export async function getAllProducts(): Promise<Product[]> {
   return PRODUCTS;
 }
 
+// Same-category fallback so a product page is NEVER empty when there are no
+// curated dupes. These are clearly framed as "popular alternatives" (modest
+// score) — the Claude algorithm replaces them with true scored dupes later.
+function fallbackDupeLevel(anchorPrice: number, candidatePrice: number): DupeLevel {
+  const ratio = candidatePrice / Math.max(anchorPrice, 1);
+  if (ratio <= 0.6) return "budget";
+  if (ratio >= 1.1) return "premium";
+  return "similar";
+}
+function toFallbackAlt(anchor: Product, p: Product): AlternativeProduct {
+  const level = fallbackDupeLevel(anchor.price, p.price);
+  const sub = anchor.subcategory.toLowerCase();
+  const reason =
+    level === "budget" ? `More affordable ${sub} with a similar profile`
+    : level === "premium" ? `Higher-end ${sub} with comparable results`
+    : `Popular ${sub} alternative`;
+  return { ...p, matchScore: 72, dupeLevel: level, reason };
+}
+const ALT_TARGET = 6;
+function rankCandidates(anchor: Product, candidates: Product[], excludeIds: Set<string>, limit: number): Product[] {
+  return candidates
+    .filter((p) => p.id !== anchor.id && !excludeIds.has(p.id))
+    .sort((a, b) => {
+      const aSub = a.subcategory === anchor.subcategory ? 1 : 0;
+      const bSub = b.subcategory === anchor.subcategory ? 1 : 0;
+      if (aSub !== bSub) return bSub - aSub; // same-subcategory first
+      return b.rating - a.rating;
+    })
+    .slice(0, limit);
+}
+
 export async function getProductAlternatives(productId: string): Promise<AlternativeProduct[]> {
   const sb = supabaseAnon();
+  const anchor = await getProduct(productId);
   if (sb) {
     const { data } = await sb
       .from("dupe_relationships")
       .select("match_score, dupe_level, reason, dupe:products!dupe_relationships_dupe_id_fkey(*)")
       .eq("original_id", productId)
       .order("match_score", { ascending: false });
-    return (data ?? [])
+    const curated = (data ?? [])
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((row: any) => {
         const dupe = Array.isArray(row.dupe) ? row.dupe[0] : row.dupe;
@@ -105,16 +138,32 @@ export async function getProductAlternatives(productId: string): Promise<Alterna
         return { ...rowToProduct(dupe), matchScore: row.match_score, dupeLevel: row.dupe_level, reason: row.reason };
       })
       .filter(Boolean) as AlternativeProduct[];
+    if (curated.length >= ALT_TARGET || !anchor) return curated.slice(0, ALT_TARGET);
+    // Top up with same-category alternatives so the page feels complete.
+    const { data: cand } = await sb
+      .from("products")
+      .select("*")
+      .eq("category", anchor.category)
+      .neq("id", productId)
+      .order("rating", { ascending: false })
+      .limit(20);
+    const exclude = new Set(curated.map((c) => c.id));
+    const fill = rankCandidates(anchor, (cand ?? []).map(rowToProduct), exclude, ALT_TARGET - curated.length).map((p) => toFallbackAlt(anchor, p));
+    return [...curated, ...fill];
   }
-  // Fallback: seed ALTERNATIVES map
+  // Seed fallback (no DB)
   const alts = ALTERNATIVES[productId] ?? [];
-  return alts
+  const curated = alts
     .map((alt) => {
       const product = PRODUCTS.find((p) => p.id === alt.productId);
       if (!product) return null;
       return { ...product, matchScore: alt.matchScore, dupeLevel: alt.dupeLevel, reason: alt.reason };
     })
     .filter(Boolean) as AlternativeProduct[];
+  if (curated.length >= ALT_TARGET || !anchor) return curated.slice(0, ALT_TARGET);
+  const exclude = new Set(curated.map((c) => c.id));
+  const fill = rankCandidates(anchor, PRODUCTS.filter((p) => p.category === anchor.category), exclude, ALT_TARGET - curated.length).map((p) => toFallbackAlt(anchor, p));
+  return [...curated, ...fill];
 }
 
 export async function searchProducts(query: string): Promise<Product[]> {

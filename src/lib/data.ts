@@ -476,16 +476,16 @@ const OFFER_SPECS: Record<string, OfferSpec[]> = {
     { retailerId: "amazon", url: "https://www.amazon.com/s?k=Cartier+Love+Bracelet", price: 6900 },
   ],
   "missoma-cuff": [
-    { retailerId: "missoma", url: "https://www.missoma.com/products/gold-screw-bangle", price: 145 },
+    { retailerId: "amazon", url: "https://www.amazon.com/s?k=Missoma+gold+screw+bangle+cuff", price: 145 },
   ],
   "mejuri-bangle": [
-    { retailerId: "mejuri", url: "https://www.mejuri.com/shop/products/bold-cuff", price: 78 },
+    { retailerId: "amazon", url: "https://www.amazon.com/s?k=Mejuri+bold+cuff+gold+vermeil", price: 78 },
   ],
   "vca-alhambra": [
     { retailerId: "amazon", url: "https://www.amazon.com/s?k=Van+Cleef+Alhambra+Pendant", price: 3500 },
   ],
   "mejuri-clover": [
-    { retailerId: "mejuri", url: "https://www.mejuri.com/shop/products/clover-pendant", price: 120 },
+    { retailerId: "amazon", url: "https://www.amazon.com/s?k=Mejuri+clover+pendant+necklace", price: 120 },
   ],
   "gorjana-clover": [
     { retailerId: "amazon", url: "https://www.amazon.com/s?k=Gorjana+Lou+Charm+Necklace", price: 65 },
