@@ -89,11 +89,11 @@ async function main() {
   );
 
   console.log("→ product_offers");
-  await sb.from("product_offers").upsert(
+  const { error: offersErr } = await sb.from("product_offers").upsert(
     OFFERS.map((o) => {
       const retailer = RETAILERS.find((r) => r.id === o.retailerId)!;
       return {
-        id: undefined, // let DB assign uuid; unique(product_id,retailer_id) dedupes
+        // omit id entirely → DB assigns uuid; unique(product_id,retailer_id) dedupes
         product_id: o.productId,
         retailer_id: o.retailerId,
         raw_url: o.rawUrl,
@@ -106,6 +106,7 @@ async function main() {
     }),
     { onConflict: "product_id,retailer_id" }
   );
+  if (offersErr) throw new Error(`product_offers upsert failed: ${offersErr.message}`);
 
   console.log("→ dupe_relationships (seed-manual)");
   const rels = Object.entries(ALTERNATIVES).flatMap(([originalId, alts]) =>
