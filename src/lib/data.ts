@@ -24,6 +24,12 @@ import {
   EXTRA_OFFER_SPECS,
   EXTRA_ALTERNATIVES,
 } from "./catalog-extended";
+import {
+  EXTRA2_BRANDS,
+  EXTRA2_PRODUCTS,
+  EXTRA2_OFFER_SPECS,
+  EXTRA2_ALTERNATIVES,
+} from "./catalog-extended-2";
 
 export type {
   Brand,
@@ -70,6 +76,7 @@ export const BRANDS: Brand[] = [
   { id: "gorjana", name: "Gorjana", category: "jewelry", luxuryLevel: "mid", country: "USA", priceRange: "$$" },
   { id: "pandora", name: "Pandora", category: "jewelry", luxuryLevel: "budget", country: "Denmark", priceRange: "$" },
   ...EXTRA_BRANDS,
+  ...EXTRA2_BRANDS,
 ];
 
 // ── PRODUCTS ───────────────────────────────────────────────────
@@ -360,6 +367,7 @@ export const PRODUCTS: Product[] = [
     slug: "gorjana-taner-bar-cuff",
   },
   ...EXTRA_PRODUCTS,
+  ...EXTRA2_PRODUCTS,
 ];
 
 // ── RETAILERS ──────────────────────────────────────────────────
@@ -380,6 +388,7 @@ export const RETAILERS: Retailer[] = [
 // ingestion (or at fallback render time).
 const OFFER_SPECS: Record<string, OfferSpec[]> = {
   ...EXTRA_OFFER_SPECS,
+  ...EXTRA2_OFFER_SPECS,
   "olaplex-3": [
     { retailerId: "amazon", url: "https://www.amazon.com/s?k=Olaplex+No+3+Hair+Perfector", price: 30 },
     { retailerId: "sephora", url: "https://www.sephora.com/search?keyword=olaplex%20no%203", price: 30 },
@@ -511,6 +520,7 @@ export const OFFERS: Offer[] = Object.entries(OFFER_SPECS).flatMap(([productId, 
 // ── DUPE RELATIONSHIPS (manual seed; engine recomputes later) ──
 export const ALTERNATIVES: Record<string, Alternative[]> = {
   ...EXTRA_ALTERNATIVES,
+  ...EXTRA2_ALTERNATIVES,
   "olaplex-3": [
     { productId: "k18-mask", matchScore: 94, dupeLevel: "premium", reason: "Superior bond repair technology, faster results" },
     { productId: "redken-acidic", matchScore: 87, dupeLevel: "similar", reason: "Same bond-building active, salon quality" },
@@ -565,12 +575,12 @@ export const ALTERNATIVES: Record<string, Alternative[]> = {
 export const CATEGORIES = [
   {
     slug: "beauty", label: "Beauty", icon: "✦", description: "Skincare, makeup, and fragrance",
-    subcategories: ["Moisturizer", "Serum", "Essence", "Concealer", "Foundation", "Blush", "Bronzer", "Brow", "Lipstick", "Lip Oil", "Lip Gloss", "Mascara"],
+    subcategories: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Foundation", "Concealer", "Setting Spray", "Setting Powder", "Blush", "Bronzer", "Brow", "Lipstick", "Lip Oil", "Lip Gloss", "Mascara"],
     color: "#c9617a", bgColor: "#f5dde3",
   },
   {
     slug: "hair", label: "Hair Care", icon: "◈", description: "Treatments, styling, and repair",
-    subcategories: ["Shampoo", "Conditioner", "Treatment", "Mask", "Oil", "Styling", "Dry Shampoo"],
+    subcategories: ["Shampoo", "Conditioner", "Treatment", "Mask", "Oil", "Styling", "Dry Shampoo", "Styling Tool"],
     color: "#9e7a2a", bgColor: "#f5ead4",
   },
   {

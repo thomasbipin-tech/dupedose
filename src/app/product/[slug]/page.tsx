@@ -5,6 +5,7 @@ import ComparisonTable from "@/components/ComparisonTable";
 import { CATEGORIES } from "@/lib/data";
 import { getProductBySlug, getProductAlternatives, getProductOffers, getAllProductSlugs } from "@/lib/db";
 import { formatPrice } from "@/lib/types";
+import { productImage } from "@/lib/images";
 import { AFFILIATE_DISCLOSURE } from "@/lib/affiliate";
 
 interface ProductPageProps {
@@ -68,10 +69,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
       {/* Product hero */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
         {/* Image */}
-        <div className="rounded-3xl overflow-hidden flex items-center justify-center" style={{ background: BG_GRAD[product.category] ?? BG_GRAD.beauty, minHeight: 360 }}>
-          <span style={{ fontSize: "8rem", opacity: 0.25 }}>
-            {product.category === "jewelry" ? "◇" : product.category === "hair" ? "◈" : "✦"}
-          </span>
+        <div className="rounded-3xl overflow-hidden" style={{ background: BG_GRAD[product.category] ?? BG_GRAD.beauty, minHeight: 360 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={productImage(product)} alt={`${product.brandName} ${product.name}`}
+            className="w-full h-full" style={{ objectFit: "cover", minHeight: 360 }} />
         </div>
 
         {/* Info */}

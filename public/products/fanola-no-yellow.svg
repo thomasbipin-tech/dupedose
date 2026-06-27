@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Fanola No Yellow Purple Shampoo">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7efd9"/>
+      <stop offset="1" stop-color="#ecd9a8"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#g)"/>
+  <text x="300" y="430" text-anchor="middle" font-family="Georgia, serif" font-size="420" fill="#9e7a2a" opacity="0.10">◈</text>
+  <text x="40" y="70" font-family="system-ui, sans-serif" font-size="26" font-weight="600" letter-spacing="2" fill="#9e7a2a">FANOLA</text>
+  <text x="300" y="292" text-anchor="middle" font-family="Georgia, serif" font-size="40" font-weight="700" fill="#1a1a1a">No Yellow Purple</text><text x="300" y="348" text-anchor="middle" font-family="Georgia, serif" font-size="40" font-weight="700" fill="#1a1a1a">Shampoo</text>
+  <g>
+    <rect x="40" y="520" rx="18" ry="18" width="151" height="40" fill="#9e7a2a"/>
+    <text x="115.5" y="546" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#ffffff">Shampoo</text>
+  </g>
+  
+</svg>

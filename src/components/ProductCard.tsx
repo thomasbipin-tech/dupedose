@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Product, formatPrice, dupleLevelLabel, DupeLevel } from "@/lib/types";
+import { productImage } from "@/lib/images";
 
 interface ProductCardProps {
   product: Product;
@@ -37,6 +38,9 @@ export default function ProductCard({ product, matchScore, dupeLevel, reason }: 
       <div className="product-card rounded-2xl overflow-hidden" style={{ background: "var(--card-bg)", border: "1px solid var(--border)" }}>
         {/* Image area */}
         <div className="relative overflow-hidden" style={{ background: bgGrad, height: 200 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={productImage(product)} alt={`${product.brandName} ${product.name}`} loading="lazy"
+            className="absolute inset-0 w-full h-full" style={{ objectFit: "cover" }} />
           {matchScore !== undefined && (
             <div className="absolute top-3 left-3">
               <span className={`match-badge ${matchScore >= 90 ? "match-high" : matchScore >= 80 ? "match-mid" : "match-budget"}`}>
@@ -51,12 +55,6 @@ export default function ProductCard({ product, matchScore, dupeLevel, reason }: 
               </span>
             </div>
           )}
-          {/* Placeholder icon */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-30">
-            <span style={{ fontSize: "4rem" }}>
-              {product.category === "jewelry" ? "◇" : product.category === "hair" ? "◈" : "✦"}
-            </span>
-          </div>
         </div>
 
         {/* Info */}
