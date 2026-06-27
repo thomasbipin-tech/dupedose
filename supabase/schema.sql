@@ -91,7 +91,6 @@ create table if not exists dupe_relationships (
   reason         text,
   engine_version text default 'seed-manual',
   computed_at    timestamptz default now(),
-  constraint dupe_relationships_dupe_id_fkey foreign key (dupe_id) references products(id) on delete cascade,
   unique (original_id, dupe_id)
 );
 create index if not exists dupe_original_idx on dupe_relationships(original_id);
