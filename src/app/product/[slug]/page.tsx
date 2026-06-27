@@ -4,7 +4,7 @@ import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import ComparisonTable from "@/components/ComparisonTable";
 import { CATEGORIES } from "@/lib/data";
-import { getProductBySlug, getProductAlternatives, getProductOffers, getAllProductSlugs } from "@/lib/db";
+import { getProductBySlug, getProductAlternatives, getProductOffers } from "@/lib/db";
 import { formatPrice } from "@/lib/types";
 import { productImage } from "@/lib/images";
 import { absoluteUrl, SITE_NAME } from "@/lib/site";
@@ -15,9 +15,11 @@ interface ProductPageProps {
 }
 
 export const revalidate = 3600;
-
+// Render product pages on-demand (ISR) instead of prerendering all ~340 at
+// build time — keeps the Vercel build fast/reliable; pages cache on first hit.
+export const dynamicParams = true;
 export async function generateStaticParams() {
-  return getAllProductSlugs();
+  return [];
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
