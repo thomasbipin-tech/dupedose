@@ -126,7 +126,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     className="no-underline flex items-center justify-between px-5 py-3.5 rounded-2xl font-semibold transition-all"
                     style={{ background: "var(--rose)", color: "#fff", fontFamily: "system-ui, sans-serif" }}>
                     <span>View Deal at {offer.retailerName}</span>
-                    <span>{offer.price ? formatPrice(offer.price) : "Shop"} →</span>
+                    {/* Amazon's Operating Agreement restricts showing non-API prices — show a CTA instead. */}
+                    <span>{offer.network === "amazon" ? "Check price" : offer.price ? formatPrice(offer.price) : "Shop"} →</span>
                   </a>
                 ))}
               </div>
