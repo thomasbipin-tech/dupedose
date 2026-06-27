@@ -4,6 +4,8 @@ import ProductCard from "@/components/ProductCard";
 import { CATEGORIES, POPULAR_SEARCHES } from "@/lib/data";
 import { getTrendingProducts } from "@/lib/db";
 
+export const revalidate = 3600;
+
 export default async function HomePage() {
   const trending = await getTrendingProducts();
 

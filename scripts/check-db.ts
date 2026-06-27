@@ -5,18 +5,20 @@
 //   npm run check-db
 // ────────────────────────────────────────────────────────────
 
-import { supabaseAnon, isSupabaseConfigured } from "../src/lib/supabase";
+import { supabaseAnon, supabaseAdmin, isSupabaseConfigured } from "../src/lib/supabase";
 
-const TABLES = [
+// Catalog tables are publicly readable; the log tables are RLS-protected
+// (insert-only for anon), so they must be counted with the service-role key.
+const PUBLIC_TABLES = [
   "categories",
   "brands",
   "products",
   "retailers",
   "product_offers",
   "dupe_relationships",
-  "click_log",
-  "search_log",
 ];
+const LOG_TABLES = ["click_log", "search_log"];
+const TABLES = [...PUBLIC_TABLES, ...LOG_TABLES];
 
 async function main() {
   if (!isSupabaseConfigured()) {
@@ -26,17 +28,21 @@ async function main() {
     );
     process.exit(1);
   }
-  const sb = supabaseAnon()!;
+  const anon = supabaseAnon()!;
+  const admin = supabaseAdmin(); // null if no service-role key
   console.log("→ Connected to Supabase. Row counts:\n");
 
   let ok = true;
   for (const table of TABLES) {
-    const { count, error } = await sb.from(table).select("*", { count: "exact", head: true });
+    // Log tables are RLS-protected (no anon SELECT) — count them with admin.
+    const client = LOG_TABLES.includes(table) && admin ? admin : anon;
+    const note = LOG_TABLES.includes(table) && !admin ? " (set service-role key to count)" : "";
+    const { count, error } = await client.from(table).select("*", { count: "exact", head: true });
     if (error) {
       console.log(`   ✗ ${table.padEnd(20)} ERROR: ${error.message}`);
       ok = false;
     } else {
-      console.log(`   ✓ ${table.padEnd(20)} ${count ?? 0}`);
+      console.log(`   ✓ ${table.padEnd(20)} ${count ?? 0}${note}`);
     }
   }
 
