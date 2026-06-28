@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import Analytics from "@/components/Analytics";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <Analytics />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([orgJsonLd, siteJsonLd]) }} />
         <Nav />
         <main>{children}</main>
