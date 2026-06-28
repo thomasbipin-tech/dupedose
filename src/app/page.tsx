@@ -57,10 +57,10 @@ export default async function HomePage() {
                 style={{ minHeight: 380, background: covers[cat.slug] ? `#eee` : "var(--background-alt)", border: "1px solid var(--border)" }}>
                 {covers[cat.slug] && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={covers[cat.slug]} alt={cat.label} className="pc-img absolute inset-0 w-full h-full" style={{ objectFit: "cover", opacity: 0.55 }} />
+                  <img src={covers[cat.slug]} alt={cat.label} className="pc-img absolute inset-0 w-full h-full" style={{ objectFit: "cover", objectPosition: "right center", opacity: 0.95 }} />
                 )}
-                {/* legibility overlay — keeps the photo a soft accent so the header leads */}
-                <div className="absolute inset-0" style={{ background: "linear-gradient(105deg, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.92) 48%, rgba(255,255,255,0.78) 74%, rgba(255,255,255,0.55) 100%)" }} />
+                {/* legibility scrim — solid white under the left-aligned text, clear on the right so the photo shows */}
+                <div className="absolute inset-0" style={{ background: "linear-gradient(100deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 42%, rgba(255,255,255,0.55) 60%, rgba(255,255,255,0) 78%)" }} />
                 <div className="relative p-7">
                   <div className="flex items-center justify-center" style={{ width: 46, height: 46, borderRadius: "50%", background: "#fff", boxShadow: "var(--shadow-sm)", fontSize: "1.2rem", marginBottom: 16 }}>{cat.icon}</div>
                   <h3 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 6 }}>{cat.label}</h3>
