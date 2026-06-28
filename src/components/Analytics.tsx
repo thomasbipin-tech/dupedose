@@ -1,10 +1,9 @@
 import Script from "next/script";
 
-// Google Analytics 4. Set NEXT_PUBLIC_GA_ID (format: G-XXXXXXX) in the
-// environment (Vercel → Settings → Environment Variables). When the var is
-// absent (e.g. local dev) nothing is rendered, so no tracking runs.
+// Google Analytics 4. Defaults to the DupeDose property; override with
+// NEXT_PUBLIC_GA_ID (Vercel → Settings → Environment Variables) if needed.
 export default function Analytics() {
-  const id = process.env.NEXT_PUBLIC_GA_ID;
+  const id = process.env.NEXT_PUBLIC_GA_ID || "G-X7E0GQ40LC";
   if (!id) return null;
 
   return (
