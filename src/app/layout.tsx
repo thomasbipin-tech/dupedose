@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image", title: "DupeDose", description: SITE_DESCRIPTION },
   robots: { index: true, follow: true },
+  verification: {
+    other: { "p:domain_verify": "91f0b3d5ffe1493ca7ef4126636d19c4" },
+  },
 };
 
 // Site-wide structured data so Google + AI answer engines understand the brand.
