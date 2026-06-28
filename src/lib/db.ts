@@ -206,22 +206,41 @@ export async function searchProducts(query: string): Promise<Product[]> {
   if (!q) return getAllProducts();
   const sb = supabaseAnon();
   if (sb) {
-    const like = `%${q}%`;
-    const { data } = await sb
-      .from("products")
-      .select("*")
-      .or(`name.ilike.${like},brand_name.ilike.${like},subcategory.ilike.${like},description.ilike.${like},category.ilike.${like}`)
-      .order("rating", { ascending: false });
-    return (data ?? []).map(rowToProduct);
+    const byId = new Map<string, Product>();
+    // 1) Full-text search (word/stem match) — "Ring" matches the word ring/rings,
+    //    "watches" matches watch; NO substring noise from descriptions.
+    try {
+      const { data: fts } = await sb
+        .from("products")
+        .select("*")
+        .textSearch("search_vector", q, { type: "websearch" })
+        .order("review_count", { ascending: false })
+        .limit(80);
+      for (const r of fts ?? []) byId.set(r.id, rowToProduct(r));
+    } catch {
+      /* malformed query — fall through to ILIKE */
+    }
+    // 2) WORD-BOUNDARY partial on NAME/BRAND/SUBCATEGORY (so "cera"→CeraVe and
+    //    "ring"→"Trinity Ring" work, but never mid-word like "Repai[ring]").
+    const safe = q.replace(/[%,()*]/g, "").trim();
+    if (safe) {
+      const orFilter = ["name", "brand_name", "subcategory"]
+        .flatMap((f) => [`${f}.ilike.${safe}%`, `${f}.ilike.% ${safe}%`])
+        .join(",");
+      const { data: il } = await sb
+        .from("products")
+        .select("*")
+        .or(orFilter)
+        .order("review_count", { ascending: false })
+        .limit(80);
+      for (const r of il ?? []) if (!byId.has(r.id)) byId.set(r.id, rowToProduct(r));
+    }
+    return [...byId.values()];
   }
-  const lower = q.toLowerCase();
+  // Seed fallback (no DB): word-boundary match on name/brand/subcategory only.
+  const re = new RegExp(`\\b${q.replace(/[^a-z0-9 ]/gi, "")}`, "i");
   return PRODUCTS.filter(
-    (p) =>
-      p.name.toLowerCase().includes(lower) ||
-      p.brandName.toLowerCase().includes(lower) ||
-      p.category.toLowerCase().includes(lower) ||
-      p.subcategory.toLowerCase().includes(lower) ||
-      p.description.toLowerCase().includes(lower)
+    (p) => re.test(p.name) || re.test(p.brandName) || re.test(p.subcategory)
   );
 }
 
