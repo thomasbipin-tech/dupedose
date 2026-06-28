@@ -245,7 +245,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <h2 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "1.25rem" }}>
             Side-by-Side Comparison
           </h2>
-          <ComparisonTable products={comparisonProducts} />
+          <ComparisonTable products={comparisonProducts} currentSlug={product.slug} />
         </section>
       )}
     </div>

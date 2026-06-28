@@ -3,6 +3,7 @@ import { Product, formatPrice } from "@/lib/types";
 
 interface ComparisonTableProps {
   products: Product[];
+  currentSlug?: string; // the product whose page this is — shown as "Viewing", not a self-link
 }
 
 function CheckIcon({ yes }: { yes: boolean }) {
@@ -11,7 +12,7 @@ function CheckIcon({ yes }: { yes: boolean }) {
     : <span style={{ color: "#e5e7eb", fontSize: "1.1rem" }}>—</span>;
 }
 
-export default function ComparisonTable({ products }: ComparisonTableProps) {
+export default function ComparisonTable({ products, currentSlug }: ComparisonTableProps) {
   if (products.length < 2) return null;
 
   const allAttrKeys = Array.from(new Set(products.flatMap(p => Object.keys(p.attributes ?? {}))));
@@ -98,14 +99,22 @@ export default function ComparisonTable({ products }: ComparisonTableProps) {
           {/* View row — link to each product */}
           <tr style={{ borderTop: "1px solid var(--border)" }}>
             <td className="px-6 py-5 text-sm font-medium" style={{ color: "var(--muted)", fontFamily: "var(--font-sans)" }}></td>
-            {products.map((p) => (
-              <td key={p.id} className="px-6 py-5 text-center">
-                <Link href={`/product/${p.slug}`} className="no-underline btn-primary inline-block"
-                  style={{ padding: "9px 22px", fontSize: "0.76rem", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  View
-                </Link>
-              </td>
-            ))}
+            {products.map((p) =>
+              p.slug === currentSlug ? (
+                <td key={p.id} className="px-6 py-5 text-center">
+                  <span style={{ fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)", border: "1px solid var(--border-strong)", padding: "9px 18px", display: "inline-block", borderRadius: "var(--r-md)" }}>
+                    Viewing
+                  </span>
+                </td>
+              ) : (
+                <td key={p.id} className="px-6 py-5 text-center">
+                  <Link href={`/product/${p.slug}`} className="no-underline btn-primary inline-block"
+                    style={{ padding: "9px 22px", fontSize: "0.76rem", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                    View
+                  </Link>
+                </td>
+              )
+            )}
           </tr>
         </tbody>
       </table>
