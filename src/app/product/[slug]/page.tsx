@@ -77,6 +77,27 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   // Structured data for Google rich results + AI answer engines.
   const lowestOffer = offers.reduce<number | null>((min, o) => (o.price != null && (min === null || o.price < min) ? o.price : min), null);
+  const cheapest = alternatives.filter((a) => a.price < product.price).sort((a, b) => a.price - b.price)[0];
+  const faqs = [
+    {
+      q: `What is a good dupe for ${product.brandName} ${product.name}?`,
+      a: alternatives.length
+        ? `${alternatives[0].brandName} ${alternatives[0].name} is our top-ranked alternative (${alternatives[0].matchScore}% match) — ${alternatives[0].reason}`
+        : `We're still curating alternatives for ${product.brandName} ${product.name}.`,
+    },
+    {
+      q: `Is there a cheaper alternative to ${product.brandName} ${product.name}?`,
+      a: cheapest
+        ? `Yes — ${cheapest.brandName} ${cheapest.name} offers a similar result for ${formatPrice(cheapest.price)} versus ${formatPrice(product.price)}.`
+        : `${product.brandName} ${product.name} is already among the more affordable options in its category.`,
+    },
+    {
+      q: `Where can I buy ${product.brandName} ${product.name}?`,
+      a: offers.length
+        ? `It's available at ${offers.map((o) => o.retailerName).slice(0, 3).join(", ")} — see the "Where to Buy" links above for current prices.`
+        : `Check the retailer links above for current availability.`,
+    },
+  ];
   const jsonLd = [
     {
       "@context": "https://schema.org",
@@ -110,6 +131,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
         "@type": "ListItem", position: i + 1, name: `${alt.brandName} ${alt.name}`, url: absoluteUrl(`/product/${alt.slug}`),
       })),
     }] : []),
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
   ];
 
   return (
@@ -248,6 +274,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <ComparisonTable products={comparisonProducts} currentSlug={product.slug} />
         </section>
       )}
+
+      {/* FAQ */}
+      <section className="mb-8">
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "1.25rem" }}>Frequently asked questions</h2>
+        <div className="flex flex-col gap-5" style={{ maxWidth: 760 }}>
+          {faqs.map((f) => (
+            <div key={f.q}>
+              <h3 style={{ fontSize: "1.02rem", fontWeight: 600, marginBottom: 4 }}>{f.q}</h3>
+              <p style={{ color: "var(--muted)", lineHeight: 1.6, fontSize: "0.95rem" }}>{f.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

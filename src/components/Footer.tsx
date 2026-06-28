@@ -24,7 +24,7 @@ export default function Footer() {
             </p>
           </div>
           {col("Shop", [["Beauty", "/category/beauty"], ["Hair", "/category/hair"], ["Jewelry", "/category/jewelry"]])}
-          {col("Tools", [["Find My Dupe", "/search"], ["Compare", "/compare"], ["Beauty Quiz", "/quiz"]])}
+          {col("Tools", [["Find My Dupe", "/search"], ["Dupe Guides", "/dupes"], ["Compare", "/compare"], ["Beauty Quiz", "/quiz"]])}
           {col("Company", [["About", "/about"], ["Affiliate Disclosure", "/disclosure"], ["Privacy Policy", "/privacy"]])}
         </div>
 

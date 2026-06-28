@@ -10,6 +10,7 @@ import {
   ALTERNATIVES,
   OFFERS,
   TRENDING_PRODUCTS,
+  BRANDS,
 } from "./data";
 import type {
   Product,
@@ -79,6 +80,55 @@ export async function getProductsByCategory(category: Category): Promise<Product
     return (data ?? []).map(rowToProduct);
   }
   return PRODUCTS.filter((p) => p.category === category);
+}
+
+export async function getBrandBySlug(slug: string): Promise<{ id: string; name: string; category: Category } | null> {
+  const sb = supabaseAnon();
+  if (sb) {
+    const { data } = await sb.from("brands").select("id,name,category").eq("id", slug).maybeSingle();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return data ? (data as any) : null;
+  }
+  const b = BRANDS.find((b) => b.id === slug);
+  return b ? { id: b.id, name: b.name, category: b.category } : null;
+}
+
+export async function getProductsByBrand(brandId: string): Promise<Product[]> {
+  const sb = supabaseAnon();
+  if (sb) {
+    const { data } = await sb
+      .from("products")
+      .select("*")
+      .eq("brand_id", brandId)
+      .order("is_original", { ascending: false })
+      .order("review_count", { ascending: false });
+    return (data ?? []).map(rowToProduct);
+  }
+  return PRODUCTS.filter((p) => p.brandId === brandId);
+}
+
+/** Brands that have at least one "original" — good "Best X Dupes" guide pages. */
+export async function getGuideBrands(): Promise<{ id: string; name: string; count: number }[]> {
+  const sb = supabaseAnon();
+  if (sb) {
+    const { data } = await sb.from("products").select("brand_id,brand_name").eq("is_original", true);
+    const m = new Map<string, { id: string; name: string; count: number }>();
+    for (const r of data ?? []) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const row = r as any;
+      const e = m.get(row.brand_id) ?? { id: row.brand_id, name: row.brand_name, count: 0 };
+      e.count++;
+      m.set(row.brand_id, e);
+    }
+    return [...m.values()].sort((a, b) => b.count - a.count);
+  }
+  const m = new Map<string, { id: string; name: string; count: number }>();
+  for (const p of PRODUCTS.filter((p) => p.isOriginal)) {
+    const e = m.get(p.brandId) ?? { id: p.brandId, name: p.brandName, count: 0 };
+    e.count++;
+    m.set(p.brandId, e);
+  }
+  return [...m.values()].sort((a, b) => b.count - a.count);
 }
 
 export async function getAllProducts(): Promise<Product[]> {
