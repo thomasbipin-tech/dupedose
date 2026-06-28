@@ -1,6 +1,6 @@
 // Central site config. Canonical domain is dupedose.com (HTTPS). Override
 // with NEXT_PUBLIC_SITE_URL if ever needed (e.g. a staging URL).
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://dupedose.com").replace(/\/$/, "");
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dupedose.com").replace(/\/$/, "");
 export const SITE_NAME = "DupeDose";
 export const SITE_TAGLINE = "Find your perfect beauty match";
 export const SITE_DESCRIPTION =
