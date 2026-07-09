@@ -34,6 +34,9 @@ export default function Footer() {
             We also participate in other affiliate programs and may earn a commission, at no extra cost to you. Prices are
             reference estimates that may vary — confirm the current price on the retailer&rsquo;s website.
           </p>
+          <p style={{ fontSize: "0.74rem", color: "var(--muted)" }}>
+            As an affiliate partner, we work with Impact.com, Amazon Associates, and other networks.
+          </p>
           <p style={{ fontSize: "0.74rem", color: "var(--muted-2)" }}>© 2026 DupeDose. All rights reserved.</p>
         </div>
       </div>
