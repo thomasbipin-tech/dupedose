@@ -59,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `content=`). Rendered raw here because the Metadata API only emits
             `content=`. The spread bypasses TS rejecting `value` on <meta>.
             React 19 hoists this <meta> into <head> during SSR. */}
-        <meta name="impact-site-verification" {...{ value: "b8a28232-0d1b-4b20-a574-f0e2952d7a89" }} />
+        <meta name="impact-site-verification" {...{ value: "931441bc-8bc9-45c1-93a9-7c9ff3ca2e89" }} />
         <Analytics />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([orgJsonLd, siteJsonLd]) }} />
         <Nav />
