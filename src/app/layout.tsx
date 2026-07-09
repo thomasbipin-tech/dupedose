@@ -26,6 +26,9 @@ export const metadata: Metadata = {
   verification: {
     other: { "p:domain_verify": "91f0b3d5ffe1493ca7ef4126636d19c4" },
   },
+  other: {
+    "impact-site-verification": "b8a28232-0d1b-4b20-a574-f0e2952d7a89",
+  },
 };
 
 // Site-wide structured data so Google + AI answer engines understand the brand.
