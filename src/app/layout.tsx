@@ -26,9 +26,9 @@ export const metadata: Metadata = {
   verification: {
     other: { "p:domain_verify": "91f0b3d5ffe1493ca7ef4126636d19c4" },
   },
-  other: {
-    "impact-site-verification": "b8a28232-0d1b-4b20-a574-f0e2952d7a89",
-  },
+  // NOTE: Impact's verification tag must render as `value=` (not `content=`),
+  // which the Next.js Metadata API can't emit — so it's rendered as a raw
+  // <meta> element in the JSX below instead of via `other` here.
 };
 
 // Site-wide structured data so Google + AI answer engines understand the brand.
@@ -55,6 +55,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        {/* Impact affiliate site verification — MUST render as `value=` (not
+            `content=`). Rendered raw here because the Metadata API only emits
+            `content=`. The spread bypasses TS rejecting `value` on <meta>.
+            React 19 hoists this <meta> into <head> during SSR. */}
+        <meta name="impact-site-verification" {...{ value: "b8a28232-0d1b-4b20-a574-f0e2952d7a89" }} />
         <Analytics />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([orgJsonLd, siteJsonLd]) }} />
         <Nav />
