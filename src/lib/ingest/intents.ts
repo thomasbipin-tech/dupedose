@@ -143,4 +143,17 @@ export const INTENTS: DupeIntent[] = [
   { originalQuery: "Mejuri pearl necklace gold", discoveryQuery: "freshwater pearl necklace", category: "jewelry", subcategory: "Necklace" },
   { originalQuery: "Cuban link chain necklace gold", discoveryQuery: "gold cuban link chain necklace", category: "jewelry", subcategory: "Necklace" },
   { originalQuery: "gold paperclip chain necklace", discoveryQuery: "paperclip link chain necklace gold", category: "jewelry", subcategory: "Necklace" },
+
+  // ── DEMAND-DRIVEN (Jul 2026): gaps vs the top-10 most dupe-searched US
+  // beauty brands (RetailBoss, Google data Nov 2025-2026) + viral funnels.
+  { originalQuery: "Sol de Janeiro Brazilian Bum Bum Cream", discoveryQuery: "firming body cream vanilla scented", category: "beauty", subcategory: "Body Cream", tags: ["viral"] },
+  { originalQuery: "Sol de Janeiro Cheirosa 62 perfume mist", discoveryQuery: "vanilla pistachio caramel body mist", category: "beauty", subcategory: "Fragrance", tags: ["viral", "fragrance"] },
+  { originalQuery: "Drunk Elephant D-Bronzi Sunshine Drops", discoveryQuery: "bronzing drops liquid bronzer serum", category: "beauty", subcategory: "Bronzer", tags: ["viral"] },
+  { originalQuery: "Glossier Cloud Paint blush", discoveryQuery: "gel cream blush seamless", category: "beauty", subcategory: "Cream Blush", tags: ["viral"] },
+  { originalQuery: "Rhode Peptide Lip Treatment", discoveryQuery: "peptide lip treatment balm", category: "beauty", subcategory: "Lip Treatment", tags: ["viral", "tiktok"] },
+  { originalQuery: "Summer Fridays Lip Butter Balm", discoveryQuery: "lip butter balm hydrating", category: "beauty", subcategory: "Lip Treatment", tags: ["viral", "tiktok"] },
+  { originalQuery: "Estee Lauder Double Wear Stay-in-Place Foundation", discoveryQuery: "long wear full coverage matte foundation", category: "beauty", subcategory: "Foundation" },
+  { originalQuery: "Giorgio Armani Luminous Silk Foundation", discoveryQuery: "luminous natural finish foundation", category: "beauty", subcategory: "Foundation", tags: ["luxury"] },
+  { originalQuery: "Fenty Beauty Gloss Bomb Universal Lip Luminizer", discoveryQuery: "lip gloss luminizer shimmer", category: "beauty", subcategory: "Lip Gloss", tags: ["viral"] },
+  { originalQuery: "Dior Backstage Rosy Glow Blush", discoveryQuery: "rosy glow powder blush pink", category: "beauty", subcategory: "Blush", tags: ["viral", "luxury"] },
 ];

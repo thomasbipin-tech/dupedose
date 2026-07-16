@@ -585,14 +585,14 @@ export type Collection = {
 export const CATEGORIES: Collection[] = [
   {
     slug: "skincare", label: "Skincare", icon: "✦", description: "Moisturizers, serums, cleansers, and SPF",
-    cats: ["beauty"], subs: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment", "Toner", "Eye Cream", "Face Oil"],
-    subcategories: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment", "Toner", "Eye Cream", "Face Oil"],
+    cats: ["beauty"], subs: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment", "Toner", "Eye Cream", "Face Oil", "Body Cream"],
+    subcategories: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment", "Toner", "Eye Cream", "Face Oil", "Body Cream"],
     color: "#c9617a", bgColor: "#f5dde3",
   },
   {
     slug: "makeup", label: "Makeup", icon: "✧", description: "Complexion, lips, eyes, and brows",
-    cats: ["beauty"], subs: ["Foundation", "Concealer", "Complexion", "Setting Spray", "Setting Powder", "Blush", "Bronzer", "Brow", "Lipstick", "Lip Oil", "Lip Gloss", "Mascara"],
-    subcategories: ["Foundation", "Concealer", "Complexion", "Setting Spray", "Setting Powder", "Blush", "Bronzer", "Brow", "Lipstick", "Lip Oil", "Lip Gloss", "Mascara"],
+    cats: ["beauty"], subs: ["Foundation", "Concealer", "Complexion", "Setting Spray", "Setting Powder", "Blush", "Cream Blush", "Bronzer", "Brow", "Lipstick", "Lip Oil", "Lip Gloss", "Mascara"],
+    subcategories: ["Foundation", "Concealer", "Complexion", "Setting Spray", "Setting Powder", "Blush", "Cream Blush", "Bronzer", "Brow", "Lipstick", "Lip Oil", "Lip Gloss", "Mascara"],
     color: "#a05e6b", bgColor: "#f5e0e4",
   },
   {
