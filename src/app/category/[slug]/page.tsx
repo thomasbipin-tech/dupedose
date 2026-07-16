@@ -96,10 +96,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {cat.subcategories.map((sub) => (
-              <Link key={sub} href={`/search?q=best+${sub.toLowerCase()}+alternatives`}
+              <Link key={sub} href={`/search?q=${encodeURIComponent(sub)}`}
                 className="no-underline p-3 text-sm font-medium"
                 style={{ background: "#fff", color: "var(--foreground)", border: "1px solid var(--border)" }}>
-                Best {sub} Alternatives →
+                Best {sub} Dupes →
               </Link>
             ))}
           </div>

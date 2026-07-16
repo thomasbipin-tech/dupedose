@@ -312,7 +312,8 @@ export async function searchProducts(query: string): Promise<Product[]> {
 export async function getTrendingProducts(): Promise<Product[]> {
   const sb = supabaseAnon();
   if (sb) {
-    const { data } = await sb.from("products").select("*").eq("is_original", true).neq("category", "jewelry").order("review_count", { ascending: false }).limit(6);
+    // Trending = originals people hunt dupes FOR — premium anchors only.
+    const { data } = await sb.from("products").select("*").eq("is_original", true).neq("category", "jewelry").gte("price", 25).order("review_count", { ascending: false }).limit(12);
     if (data && data.length) return data.map(rowToProduct);
   }
   return TRENDING_PRODUCTS.map((id) => PRODUCTS.find((p) => p.id === id)).filter(Boolean) as Product[];

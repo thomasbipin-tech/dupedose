@@ -8,6 +8,7 @@ import { getProductBySlug, getProductAlternatives, getProductOffers } from "@/li
 import { formatPrice } from "@/lib/types";
 import { productImage } from "@/lib/images";
 import { absoluteUrl, SITE_NAME } from "@/lib/site";
+import { getPairEditorial } from "@/lib/editorial";
 import { AFFILIATE_DISCLOSURE } from "@/lib/affiliate";
 
 interface ProductPageProps {
@@ -231,14 +232,51 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </div>
 
+      {/* Best-dupe spotlight: The Scoop + Key Differences (flagship pairs) */}
+      {alternatives.length > 0 && (() => {
+        const top = alternatives[0];
+        const ed = getPairEditorial(product.slug, top.slug);
+        if (!ed) return null;
+        const savings = product.price - top.price;
+        const pct = product.price > 0 ? Math.round((savings / product.price) * 100) : 0;
+        return (
+          <section className="mb-16" style={{ background: "#fff", border: "1px solid var(--border)" }}>
+            <div className="p-8">
+              <p className="eyebrow mb-1">Best dupe · {top.matchScore}% match</p>
+              <h2 style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: 4 }}>
+                {top.brandName} {top.name}
+              </h2>
+              {savings > 0 && (
+                <p style={{ fontSize: "0.95rem", color: "var(--rose, #b76e79)", fontWeight: 700, marginBottom: 18 }}>
+                  {formatPrice(top.price)} — save {formatPrice(savings)} ({pct}%) vs {formatPrice(product.price)}
+                </p>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <h3 style={{ fontSize: "0.95rem", fontWeight: 700, marginBottom: 8 }}>The Scoop</h3>
+                  <p style={{ fontSize: "0.92rem", color: "var(--muted)", lineHeight: 1.7 }}>{ed.scoop}</p>
+                </div>
+                <div>
+                  <h3 style={{ fontSize: "0.95rem", fontWeight: 700, marginBottom: 8 }}>Key Differences</h3>
+                  <p style={{ fontSize: "0.92rem", color: "var(--muted)", lineHeight: 1.7 }}>{ed.differences}</p>
+                </div>
+              </div>
+              <Link href={`/product/${top.slug}`} className="no-underline inline-block mt-6 px-5 py-3 btn-primary" style={{ fontWeight: 600 }}>
+                View {top.name} →
+              </Link>
+            </div>
+          </section>
+        );
+      })()}
+
       {/* Alternatives */}
       {alternatives.length > 0 && (
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="eyebrow mb-1">Ranked dupes</p>
+              <p className="eyebrow mb-1">{product.isOriginal && product.price >= 25 ? "Ranked dupes" : "Similar products"}</p>
               <h2 style={{ fontSize: "1.5rem", fontWeight: 600 }}>
-                Best alternatives to {product.name}
+                {product.isOriginal && product.price >= 25 ? `Best dupes for ${product.name}` : `Alternatives to ${product.name}`}
               </h2>
             </div>
           </div>

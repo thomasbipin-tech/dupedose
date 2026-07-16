@@ -61,9 +61,17 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <div className="text-center py-20">
           <p style={{ fontSize: "3rem", marginBottom: "1rem" }}>✦</p>
           <h3 style={{ fontFamily: "Georgia, serif", fontSize: "1.35rem", marginBottom: "0.5rem" }}>No results found</h3>
-          <p style={{ color: "var(--muted)", fontFamily: "system-ui, sans-serif" }}>
-            Try a brand name, product type, or describe what you&apos;re looking for.
+          <p style={{ color: "var(--muted)", fontFamily: "system-ui, sans-serif", marginBottom: "1.5rem" }}>
+            Try a brand name (Olaplex, Dior, Rhode) or a product type (serum, blush, lip balm).
           </p>
+          <div className="flex flex-wrap gap-2 justify-center">
+            {[["Skincare", "/category/skincare"], ["Makeup", "/category/makeup"], ["Fragrance", "/category/fragrance"], ["Hair Care", "/category/hair"], ["Dupe Guides", "/dupes"]].map(([l, h]) => (
+              <Link key={h} href={h} className="no-underline px-4 py-2 text-sm font-medium"
+                style={{ background: "#fff", color: "var(--foreground)", border: "1px solid var(--border-strong)", borderRadius: 999 }}>
+                {l}
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>

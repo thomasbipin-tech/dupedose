@@ -13,7 +13,8 @@ export default async function HomePage() {
 
   // Above-the-fold proof: real original→dupe pairs with the actual saving,
   // so visitors see the value before they type anything.
-  const originals = trending.filter((p) => p.isOriginal && p.price > 0).slice(0, 8);
+  // Only anchor on genuinely premium originals — nobody hunts a dupe for a $12 product.
+  const originals = trending.filter((p) => p.isOriginal && p.price >= 30).slice(0, 8);
   const pairsRaw = await Promise.all(
     originals.map(async (orig) => {
       const alts = await getProductAlternatives(orig.id);
@@ -24,13 +25,16 @@ export default async function HomePage() {
   const pairs = pairsRaw.filter((p): p is NonNullable<typeof p> => p !== null && p.pct >= 10)
     .sort((a, b) => b.pct - a.pct)
     .slice(0, 4);
-  // A representative real product image per collection for the tile backgrounds.
+  // Per-collection tile data: a real cover photo + concrete value (count, entry price).
   const collections = CATEGORIES.filter((c) => !c.hidden);
   const covers: Record<string, string> = {};
+  const tileStats: Record<string, { count: number; from: number }> = {};
   await Promise.all(
     collections.map(async (c) => {
       const ps = await getProductsByCollection(c.cats, c.subs);
       covers[c.slug] = ps.find((p) => p.image && /^https?:/.test(p.image))?.image ?? "";
+      const prices = ps.map((p) => p.price).filter((p) => p > 0);
+      tileStats[c.slug] = { count: ps.length, from: prices.length ? Math.min(...prices) : 0 };
     })
   );
 
@@ -114,6 +118,11 @@ export default async function HomePage() {
                   <div className="flex items-center justify-center" style={{ width: 46, height: 46, borderRadius: "50%", background: "#fff", boxShadow: "var(--shadow-sm)", fontSize: "1.2rem", marginBottom: 16 }}>{cat.icon}</div>
                   <h3 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 6 }}>{cat.label}</h3>
                   <p style={{ fontSize: "0.9rem", color: "var(--foreground)", maxWidth: 200, lineHeight: 1.5 }}>{cat.description}</p>
+                  {tileStats[cat.slug]?.count > 0 && (
+                    <p style={{ fontSize: "0.78rem", color: "var(--muted)", marginTop: 10, fontWeight: 600 }}>
+                      {tileStats[cat.slug].count} products · dupes from {formatPrice(tileStats[cat.slug].from)}
+                    </p>
+                  )}
                 </div>
                 <div className="relative p-7 pt-0">
                   <span className="inline-block" style={{ background: "#fff", color: "var(--foreground)", padding: "10px 18px", fontSize: "0.74rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", boxShadow: "var(--shadow-sm)" }}>
@@ -179,13 +188,13 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               ["Best Olaplex Dupes", "/search?q=olaplex"],
-              ["Luxury Makeup Dupes", "/search?q=luxury+makeup"],
+              ["Bronzing Drops Dupes", "/search?q=bronzing+drops"],
               ["La Mer Alternatives", "/search?q=la+mer"],
               ["Dupes Under $50", "/search?q=under+50"],
               ["Clean Moisturizers", "/search?q=moisturizer"],
               ["Perfume Dupes", "/search?q=perfume"],
               ["Charlotte Tilbury Dupes", "/search?q=charlotte+tilbury"],
-              ["Viral TikTok Dupes", "/search?q=viral"],
+              ["Lip Butter Balm Dupes", "/search?q=lip+butter"],
             ].map(([label, href]) => (
               <Link key={label as string} href={href as string} className="no-underline"
                 style={{ padding: "14px 16px", background: "#fff", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "0.85rem", fontWeight: 500 }}>

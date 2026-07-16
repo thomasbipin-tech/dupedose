@@ -622,7 +622,8 @@ export const POPULAR_SEARCHES = [
   "Charlotte Tilbury Pillow Talk",
   "Dior Lip Glow dupe",
   "Baccarat Rouge 540 dupe",
-  "Best vitamin C serum under $15",
+  "Vitamin C serum",
+  "Bum Bum Cream dupe",
 ];
 
 export const TRENDING_PRODUCTS = [
