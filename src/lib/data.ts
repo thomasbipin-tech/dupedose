@@ -585,8 +585,8 @@ export type Collection = {
 export const CATEGORIES: Collection[] = [
   {
     slug: "skincare", label: "Skincare", icon: "✦", description: "Moisturizers, serums, cleansers, and SPF",
-    cats: ["beauty"], subs: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment"],
-    subcategories: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment"],
+    cats: ["beauty"], subs: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment", "Toner", "Eye Cream", "Face Oil"],
+    subcategories: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment", "Toner", "Eye Cream", "Face Oil"],
     color: "#c9617a", bgColor: "#f5dde3",
   },
   {
