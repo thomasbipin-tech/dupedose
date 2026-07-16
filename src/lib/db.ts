@@ -147,10 +147,10 @@ export async function getGuideBrands(): Promise<{ id: string; name: string; coun
 export async function getAllProducts(): Promise<Product[]> {
   const sb = supabaseAnon();
   if (sb) {
-    const { data } = await sb.from("products").select("*").order("rating", { ascending: false });
+    const { data } = await sb.from("products").select("*").neq("category", "jewelry").order("rating", { ascending: false });
     return (data ?? []).map(rowToProduct);
   }
-  return PRODUCTS;
+  return PRODUCTS.filter((p) => p.category !== "jewelry");
 }
 
 // Same-category fallback so a product page is NEVER empty when there are no
