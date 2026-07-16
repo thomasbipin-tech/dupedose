@@ -157,6 +157,8 @@ export async function getAllProducts(): Promise<Product[]> {
 // curated dupes. These are clearly framed as "popular alternatives" (modest
 // score) — the Claude algorithm replaces them with true scored dupes later.
 function fallbackDupeLevel(anchorPrice: number, candidatePrice: number): DupeLevel {
+  // Small absolute gaps aren't a tier difference ($8 vs $10 isn't "premium").
+  if (Math.abs(candidatePrice - anchorPrice) < 5) return "similar";
   const ratio = candidatePrice / Math.max(anchorPrice, 1);
   if (ratio <= 0.6) return "budget";
   if (ratio >= 1.1) return "premium";
@@ -166,9 +168,9 @@ function toFallbackAlt(anchor: Product, p: Product): AlternativeProduct {
   const level = fallbackDupeLevel(anchor.price, p.price);
   const sub = anchor.subcategory.toLowerCase();
   const reason =
-    level === "budget" ? `More affordable ${sub} with a similar profile`
-    : level === "premium" ? `Higher-end ${sub} with comparable results`
-    : `Popular ${sub} alternative`;
+    level === "budget" ? `${p.brandName}'s budget take on the same ${sub} brief`
+    : level === "premium" ? `${p.brandName}'s pricier spin on this ${sub} — for when you want the upgrade`
+    : `${p.brandName}'s take on the same ${sub}, at a similar spend`;
   return { ...p, matchScore: 72, dupeLevel: level, reason };
 }
 // Keep the reason wording consistent with the price-derived tier so a pricier
@@ -176,8 +178,8 @@ function toFallbackAlt(anchor: Product, p: Product): AlternativeProduct {
 function coherentReason(level: DupeLevel, sub: string, stored: string): string {
   const cheap = /cheaper|fraction|affordable|budget|for less|lower price|less expensive|save/i;
   const lux = /higher[- ]end|premium|luxury|pricier|splurge|original/i;
-  if (level === "premium" && cheap.test(stored)) return `Higher-end ${sub} with a comparable look and results`;
-  if (level === "budget" && lux.test(stored)) return `More affordable ${sub} with a comparable result`;
+  if (level === "premium" && cheap.test(stored)) return `The pricier pick here — same ${sub} payoff if you'd rather splurge`;
+  if (level === "budget" && lux.test(stored)) return `The budget route to the same ${sub} result`;
   return stored;
 }
 // Re-tier a curated alternative by ACTUAL price vs the page's anchor, so labels
