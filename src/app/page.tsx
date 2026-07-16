@@ -2,8 +2,8 @@ import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import ProductCard from "@/components/ProductCard";
 import { CATEGORIES, POPULAR_SEARCHES } from "@/lib/data";
-import { getTrendingProducts, getProductsByCategory, getProductAlternatives } from "@/lib/db";
-import { Category, formatPrice } from "@/lib/types";
+import { getTrendingProducts, getProductsByCollection, getProductAlternatives } from "@/lib/db";
+import { formatPrice } from "@/lib/types";
 import { productImage } from "@/lib/images";
 
 export const revalidate = 3600;
@@ -24,11 +24,12 @@ export default async function HomePage() {
   const pairs = pairsRaw.filter((p): p is NonNullable<typeof p> => p !== null && p.pct >= 10)
     .sort((a, b) => b.pct - a.pct)
     .slice(0, 4);
-  // A representative real product image per category for the tile backgrounds.
+  // A representative real product image per collection for the tile backgrounds.
+  const collections = CATEGORIES.filter((c) => !c.hidden);
   const covers: Record<string, string> = {};
   await Promise.all(
-    CATEGORIES.map(async (c) => {
-      const ps = await getProductsByCategory(c.slug as Category);
+    collections.map(async (c) => {
+      const ps = await getProductsByCollection(c.cats, c.subs);
       covers[c.slug] = ps.find((p) => p.image && /^https?:/.test(p.image))?.image ?? "";
     })
   );
@@ -38,7 +39,7 @@ export default async function HomePage() {
       {/* ── HERO ── */}
       <section style={{ background: "var(--background-alt)", borderBottom: "1px solid var(--border)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
-          <p className="eyebrow fade-up" style={{ marginBottom: 14 }}>AI Dupe Discovery · Beauty · Hair · Jewelry</p>
+          <p className="eyebrow fade-up" style={{ marginBottom: 14 }}>AI Dupe Discovery · Skincare · Makeup · Fragrance · Hair</p>
           <h1 className="fade-up fade-up-delay-1" style={{ fontSize: "clamp(2.1rem, 5vw, 3.4rem)", fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", marginBottom: "0.8rem" }}>
             Find the affordable dupe for any <span className="shimmer-text">luxury product.</span>
           </h1>
@@ -98,8 +99,8 @@ export default async function HomePage() {
           <h2 style={{ fontSize: "1.6rem", fontWeight: 600 }}>Shop by category</h2>
           <Link href="/search" className="no-underline uline" style={{ fontSize: "0.82rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--foreground)" }}>View all</Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {CATEGORIES.map((cat) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {collections.map((cat) => (
             <Link key={cat.slug} href={`/category/${cat.slug}`} className="no-underline group">
               <div className="product-card relative overflow-hidden flex flex-col justify-between"
                 style={{ minHeight: 380, background: covers[cat.slug] ? `#eee` : "var(--background-alt)", border: "1px solid var(--border)" }}>
@@ -179,11 +180,11 @@ export default async function HomePage() {
             {[
               ["Best Olaplex Dupes", "/search?q=olaplex"],
               ["Luxury Makeup Dupes", "/search?q=luxury+makeup"],
-              ["Cartier Alternatives", "/search?q=cartier"],
+              ["La Mer Alternatives", "/search?q=la+mer"],
               ["Dupes Under $50", "/search?q=under+50"],
               ["Clean Moisturizers", "/search?q=moisturizer"],
               ["Perfume Dupes", "/search?q=perfume"],
-              ["Jewelry Under $200", "/search?q=jewelry"],
+              ["Charlotte Tilbury Dupes", "/search?q=charlotte+tilbury"],
               ["Viral TikTok Dupes", "/search?q=viral"],
             ].map(([label, href]) => (
               <Link key={label as string} href={href as string} className="no-underline"

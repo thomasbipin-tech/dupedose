@@ -24,7 +24,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const productPages: MetadataRoute.Sitemap = products.map((p) => ({
+  // Jewelry is delisted: product URLs stay live for old links, but we no
+  // longer ask engines to index them.
+  const productPages: MetadataRoute.Sitemap = products.filter((p) => p.category !== "jewelry").map((p) => ({
     url: `${SITE_URL}/product/${p.slug}`,
     changeFrequency: "weekly",
     priority: p.isOriginal ? 0.9 : 0.7,

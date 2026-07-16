@@ -15,7 +15,7 @@ const STEPS: Step[] = [
     options: [
       { label: "Repair damaged hair", value: "hair-repair", icon: "◈" },
       { label: "Upgrade my skincare", value: "skincare", icon: "✦" },
-      { label: "Find jewelry dupes", value: "jewelry", icon: "◇" },
+      { label: "Find a fragrance dupe", value: "fragrance", icon: "❖" },
       { label: "Dupe a luxury product", value: "dupe", icon: "★" },
     ],
   },
@@ -77,11 +77,10 @@ const RECS: Record<string, { label: string; products: { name: string; href: stri
       { name: "La Mer Crème", href: "/product/la-mer-creme-de-la-mer", desc: "The luxury benchmark" },
     ],
   },
-  "jewelry": {
-    label: "Jewelry Alternatives",
+  "fragrance": {
+    label: "Fragrance Dupes",
     products: [
-      { name: "Missoma Screw Bangle", href: "/product/missoma-screw-bangle-cuff", desc: "91% match to Cartier Love" },
-      { name: "Mejuri Bold Cuff", href: "/product/mejuri-gold-vermeil-bold-cuff", desc: "Minimalist luxury at $78" },
+      { name: "Search fragrance dupes", href: "/category/fragrance", desc: "Designer scents for less" },
     ],
   },
   "dupe": {

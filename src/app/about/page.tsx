@@ -18,7 +18,7 @@ export default function AboutPage() {
 
       <div style={{ fontFamily: "system-ui, sans-serif", color: "var(--muted)", lineHeight: 1.8, fontSize: "0.95rem" }}>
         <p className="mb-4">
-          DupeDose is an AI-powered discovery engine for <strong style={{ color: "var(--foreground)" }}>beauty, hair care, and jewelry</strong>.
+          DupeDose is an AI-powered discovery engine for <strong style={{ color: "var(--foreground)" }}>beauty — skincare, makeup, fragrance, and hair care</strong>.
           Tell us a product, brand, ingredient, or look you love, and we surface the best alternatives and
           &ldquo;dupes&rdquo; — ranked by a match score with a clear explanation of why each one is similar.
         </p>

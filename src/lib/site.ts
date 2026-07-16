@@ -4,7 +4,7 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dupedo
 export const SITE_NAME = "DupeDose";
 export const SITE_TAGLINE = "Find your perfect beauty match";
 export const SITE_DESCRIPTION =
-  "DupeDose is an AI-powered discovery engine for beauty, hair care, and jewelry. Search any luxury or viral product and find the best affordable dupes and alternatives — ranked by match score with the reasoning behind each pick.";
+  "DupeDose is an AI-powered discovery engine for beauty — skincare, makeup, fragrance, and hair care. Search any luxury or viral product and find the best affordable dupes and alternatives — ranked by match score with the reasoning behind each pick.";
 
 export function absoluteUrl(path: string) {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;

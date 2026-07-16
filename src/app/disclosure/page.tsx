@@ -25,7 +25,7 @@ export default function DisclosurePage() {
         </p>
         <p className="mb-4">
           DupeDose is a free product-discovery engine. We help you find alternatives and dupes
-          for beauty, hair care, and jewelry products — and we keep the lights on through
+          for beauty products (skincare, makeup, fragrance, and hair care) — and we keep the lights on through
           affiliate commissions.
         </p>
         <p className="mb-4">

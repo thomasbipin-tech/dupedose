@@ -4,9 +4,10 @@ import { useState } from "react";
 import Logo from "./Logo";
 
 const LINKS = [
-  { href: "/category/beauty", label: "Beauty" },
+  { href: "/category/skincare", label: "Skincare" },
+  { href: "/category/makeup", label: "Makeup" },
+  { href: "/category/fragrance", label: "Fragrance" },
   { href: "/category/hair", label: "Hair" },
-  { href: "/category/jewelry", label: "Jewelry" },
   { href: "/compare", label: "Compare" },
   { href: "/quiz", label: "Quiz" },
 ];

@@ -8,11 +8,11 @@ import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "DupeDose — Find Affordable Dupes for Beauty, Hair & Jewelry",
+    default: "DupeDose — Find Affordable Dupes for Skincare, Makeup, Fragrance & Hair",
     template: "%s · DupeDose",
   },
   description: SITE_DESCRIPTION,
-  keywords: "beauty dupes, hair care alternatives, jewelry dupes, luxury alternatives, skincare dupes, makeup dupes, fragrance dupes, affordable alternatives",
+  keywords: "beauty dupes, skincare dupes, makeup dupes, fragrance dupes, hair care alternatives, luxury alternatives, affordable alternatives",
   alternates: { canonical: "/" },
   openGraph: {
     title: "DupeDose — Find Your Perfect Beauty Match",

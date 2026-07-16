@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         {[
           {
             h: "Who we are",
-            b: "DupeDose (“we”, “us”) operates this website as a product-discovery and comparison service for beauty, hair care, and jewelry. This policy explains what information we collect and how we use it.",
+            b: "DupeDose (“we”, “us”) operates this website as a product-discovery and comparison service for beauty products (skincare, makeup, fragrance, and hair care). This policy explains what information we collect and how we use it.",
           },
           {
             h: "Information we collect",

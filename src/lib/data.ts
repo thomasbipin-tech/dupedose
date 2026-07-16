@@ -572,40 +572,62 @@ export const ALTERNATIVES: Record<string, Alternative[]> = {
 };
 
 // ── UI CONSTANTS ───────────────────────────────────────────────
-export const CATEGORIES = [
+// One beauty world, presented as collections. `cats` maps a collection to the
+// underlying product.category value(s); `subs` (optional) narrows by
+// subcategory. Hair lives inside Beauty; jewelry is delisted (rows stay in the
+// DB and product URLs stay live, but nothing links to or indexes them).
+export type Collection = {
+  slug: string; label: string; icon: string; description: string;
+  cats: string[]; subs?: string[]; subcategories: string[];
+  color: string; bgColor: string; hidden?: boolean;
+};
+
+export const CATEGORIES: Collection[] = [
   {
-    slug: "beauty", label: "Beauty", icon: "✦", description: "Skincare, makeup, and fragrance",
-    subcategories: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Foundation", "Concealer", "Setting Spray", "Setting Powder", "Blush", "Bronzer", "Brow", "Lipstick", "Lip Oil", "Lip Gloss", "Mascara"],
+    slug: "skincare", label: "Skincare", icon: "✦", description: "Moisturizers, serums, cleansers, and SPF",
+    cats: ["beauty"], subs: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment"],
+    subcategories: ["Moisturizer", "Serum", "Essence", "Cleanser", "Exfoliant", "Sunscreen", "Lip Treatment"],
     color: "#c9617a", bgColor: "#f5dde3",
   },
   {
+    slug: "makeup", label: "Makeup", icon: "✧", description: "Complexion, lips, eyes, and brows",
+    cats: ["beauty"], subs: ["Foundation", "Concealer", "Complexion", "Setting Spray", "Setting Powder", "Blush", "Bronzer", "Brow", "Lipstick", "Lip Oil", "Lip Gloss", "Mascara"],
+    subcategories: ["Foundation", "Concealer", "Complexion", "Setting Spray", "Setting Powder", "Blush", "Bronzer", "Brow", "Lipstick", "Lip Oil", "Lip Gloss", "Mascara"],
+    color: "#a05e6b", bgColor: "#f5e0e4",
+  },
+  {
+    slug: "fragrance", label: "Fragrance", icon: "❖", description: "Designer and niche scents for less",
+    cats: ["beauty"], subs: ["Fragrance"],
+    subcategories: ["Fragrance"],
+    color: "#7a5ea0", bgColor: "#eae4f5",
+  },
+  {
     slug: "hair", label: "Hair Care", icon: "◈", description: "Treatments, styling, and repair",
+    cats: ["hair"],
     subcategories: ["Shampoo", "Conditioner", "Treatment", "Mask", "Oil", "Styling", "Dry Shampoo", "Styling Tool"],
     color: "#9e7a2a", bgColor: "#f5ead4",
   },
   {
-    slug: "jewelry", label: "Jewelry", icon: "◇", description: "Fine and demi-fine jewelry",
-    subcategories: ["Bracelet", "Necklace", "Ring", "Earrings", "Watch"],
-    color: "#5b21b6", bgColor: "#ede9fe",
+    // Umbrella kept so the long-standing /category/beauty URL stays live.
+    slug: "beauty", label: "All Beauty", icon: "✦", description: "Skincare, makeup, fragrance, and hair care",
+    cats: ["beauty", "hair"],
+    subcategories: [],
+    color: "#c9617a", bgColor: "#f5dde3", hidden: true,
   },
 ];
 
 export const POPULAR_SEARCHES = [
   "Olaplex dupes",
   "La Mer alternatives",
-  "Cartier Love dupe",
   "Charlotte Tilbury Pillow Talk",
   "Dior Lip Glow dupe",
-  "Van Cleef Alhambra alternative",
+  "Baccarat Rouge 540 dupe",
   "Best vitamin C serum under $15",
-  "Luxury jewelry under $200",
 ];
 
 export const TRENDING_PRODUCTS = [
   "olaplex-3",
   "charlotte-pillow-talk",
-  "cartier-love",
   "la-mer-creme",
   "dior-lip-glow",
-  "vca-alhambra",
 ];

@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "DupeDose — Find affordable dupes for beauty, hair & jewelry";
+export const alt = "DupeDose — Find affordable dupes for skincare, makeup, fragrance & hair";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -23,7 +23,7 @@ export default function Image() {
         <div style={{ display: "flex", fontSize: 88, fontWeight: 700, marginTop: 24, textAlign: "center" }}>
           Find affordable dupes
         </div>
-        <div style={{ display: "flex", fontSize: 38, opacity: 0.7, marginTop: 18 }}>Beauty · Hair · Jewelry</div>
+        <div style={{ display: "flex", fontSize: 38, opacity: 0.7, marginTop: 18 }}>Skincare · Makeup · Fragrance · Hair</div>
       </div>
     ),
     size

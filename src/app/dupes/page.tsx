@@ -7,7 +7,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Dupe Guides — Best Affordable Alternatives by Brand",
-  description: "Browse DupeDose guides to the best dupes and affordable alternatives for top beauty, hair, and jewelry brands.",
+  description: "Browse DupeDose guides to the best dupes and affordable alternatives for top skincare, makeup, fragrance, and hair care brands.",
   alternates: { canonical: "/dupes" },
 };
 

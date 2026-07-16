@@ -17,8 +17,9 @@ export default function SearchBar({ large = false, placeholder, defaultValue = "
     if (query.trim()) router.push(`/search?q=${encodeURIComponent(query.trim())}`);
   }
 
+  // Only promise what search can actually match today (name/brand/subcategory).
   const ph = placeholder ?? (large
-    ? "Search a product, brand, ingredient, or celebrity look..."
+    ? "Search a product or brand — e.g. Olaplex, La Mer, lipstick..."
     : "Search products, dupes, and alternatives...");
 
   return (

@@ -3,8 +3,7 @@ import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import SearchBar from "@/components/SearchBar";
 import { CATEGORIES } from "@/lib/data";
-import { getProductsByCategory } from "@/lib/db";
-import { Category } from "@/lib/types";
+import { getProductsByCollection } from "@/lib/db";
 import { absoluteUrl } from "@/lib/site";
 import Link from "next/link";
 
@@ -37,7 +36,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const cat = CATEGORIES.find((c) => c.slug === slug);
   if (!cat) notFound();
 
-  const products = await getProductsByCategory(slug as Category);
+  const products = await getProductsByCollection(cat.cats, cat.subs);
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",

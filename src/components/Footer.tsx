@@ -20,10 +20,10 @@ export default function Footer() {
           <div>
             <div style={{ marginBottom: 12 }}><Logo size={26} /></div>
             <p style={{ fontSize: "0.85rem", color: "var(--muted)", lineHeight: 1.6, maxWidth: 220 }}>
-              The smart way to find affordable dupes for the beauty, hair, and jewelry you love.
+              The smart way to find affordable dupes for the beauty products you love.
             </p>
           </div>
-          {col("Shop", [["Beauty", "/category/beauty"], ["Hair", "/category/hair"], ["Jewelry", "/category/jewelry"]])}
+          {col("Shop", [["Skincare", "/category/skincare"], ["Makeup", "/category/makeup"], ["Fragrance", "/category/fragrance"], ["Hair Care", "/category/hair"]])}
           {col("Tools", [["Find My Dupe", "/search"], ["Dupe Guides", "/dupes"], ["Compare", "/compare"], ["Beauty Quiz", "/quiz"]])}
           {col("Company", [["About", "/about"], ["Affiliate Disclosure", "/disclosure"], ["Privacy Policy", "/privacy"]])}
         </div>

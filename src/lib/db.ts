@@ -83,6 +83,18 @@ export async function getProductsByCategory(category: Category): Promise<Product
   return PRODUCTS.filter((p) => p.category === category);
 }
 
+/** Fetch products for a UI collection (one or more categories, optionally narrowed by subcategory). */
+export async function getProductsByCollection(cats: string[], subs?: string[]): Promise<Product[]> {
+  const sb = supabaseAnon();
+  if (sb) {
+    let q = sb.from("products").select("*").in("category", cats);
+    if (subs && subs.length) q = q.in("subcategory", subs);
+    const { data } = await q.order("rating", { ascending: false });
+    return (data ?? []).map(rowToProduct);
+  }
+  return PRODUCTS.filter((p) => cats.includes(p.category) && (!subs || subs.includes(p.subcategory)));
+}
+
 export async function getBrandBySlug(slug: string): Promise<{ id: string; name: string; category: Category } | null> {
   const sb = supabaseAnon();
   if (sb) {
@@ -112,7 +124,7 @@ export async function getProductsByBrand(brandId: string): Promise<Product[]> {
 export async function getGuideBrands(): Promise<{ id: string; name: string; count: number }[]> {
   const sb = supabaseAnon();
   if (sb) {
-    const { data } = await sb.from("products").select("brand_id,brand_name").eq("is_original", true);
+    const { data } = await sb.from("products").select("brand_id,brand_name").eq("is_original", true).neq("category", "jewelry");
     const m = new Map<string, { id: string; name: string; count: number }>();
     for (const r of data ?? []) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -264,6 +276,7 @@ export async function searchProducts(query: string): Promise<Product[]> {
       const { data: fts } = await sb
         .from("products")
         .select("*")
+        .neq("category", "jewelry") // jewelry is delisted
         .textSearch("search_vector", q, { type: "websearch" })
         .order("review_count", { ascending: false })
         .limit(80);
@@ -281,6 +294,7 @@ export async function searchProducts(query: string): Promise<Product[]> {
       const { data: il } = await sb
         .from("products")
         .select("*")
+        .neq("category", "jewelry") // jewelry is delisted
         .or(orFilter)
         .order("review_count", { ascending: false })
         .limit(80);
@@ -291,14 +305,14 @@ export async function searchProducts(query: string): Promise<Product[]> {
   // Seed fallback (no DB): word-boundary match on name/brand/subcategory only.
   const re = new RegExp(`\\b${q.replace(/[^a-z0-9 ]/gi, "")}`, "i");
   return PRODUCTS.filter(
-    (p) => re.test(p.name) || re.test(p.brandName) || re.test(p.subcategory)
+    (p) => p.category !== "jewelry" && (re.test(p.name) || re.test(p.brandName) || re.test(p.subcategory))
   );
 }
 
 export async function getTrendingProducts(): Promise<Product[]> {
   const sb = supabaseAnon();
   if (sb) {
-    const { data } = await sb.from("products").select("*").eq("is_original", true).order("review_count", { ascending: false }).limit(6);
+    const { data } = await sb.from("products").select("*").eq("is_original", true).neq("category", "jewelry").order("review_count", { ascending: false }).limit(6);
     if (data && data.length) return data.map(rowToProduct);
   }
   return TRENDING_PRODUCTS.map((id) => PRODUCTS.find((p) => p.id === id)).filter(Boolean) as Product[];
