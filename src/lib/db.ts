@@ -83,6 +83,26 @@ export async function getProductsByCategory(category: Category): Promise<Product
   return PRODUCTS.filter((p) => p.category === category);
 }
 
+/** For a dupe product: the original it dupes (best match), with the forward
+ *  "why it's a dupe" reason. Null for originals/catalog extras. */
+export async function getOriginalFor(productId: string): Promise<{ product: Product; matchScore: number; reason: string } | null> {
+  const sb = supabaseAnon();
+  if (!sb) return null;
+  const { data: rels } = await sb
+    .from("dupe_relationships")
+    .select("original_id,match_score,reason")
+    .eq("dupe_id", productId)
+    .order("match_score", { ascending: false })
+    .limit(5);
+  for (const r of rels ?? []) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const row = r as any;
+    const { data: p } = await sb.from("products").select("*").eq("id", row.original_id).eq("is_original", true).maybeSingle();
+    if (p) return { product: rowToProduct(p), matchScore: row.match_score, reason: row.reason };
+  }
+  return null;
+}
+
 /** Fetch products for a UI collection (one or more categories, optionally narrowed by subcategory). */
 export async function getProductsByCollection(cats: string[], subs?: string[]): Promise<Product[]> {
   const sb = supabaseAnon();

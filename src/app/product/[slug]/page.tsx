@@ -4,7 +4,7 @@ import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import ComparisonTable from "@/components/ComparisonTable";
 import { CATEGORIES } from "@/lib/data";
-import { getProductBySlug, getProductAlternatives, getProductOffers } from "@/lib/db";
+import { getProductBySlug, getProductAlternatives, getProductOffers, getOriginalFor } from "@/lib/db";
 import { formatPrice } from "@/lib/types";
 import { productImage } from "@/lib/images";
 import { absoluteUrl, SITE_NAME } from "@/lib/site";
@@ -63,12 +63,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const [alternatives, offers] = await Promise.all([
+  const [alternatives, offers, originalInfo] = await Promise.all([
     getProductAlternatives(product.id),
     getProductOffers(product.id),
+    product.isOriginal ? Promise.resolve(null) : getOriginalFor(product.id),
   ]);
   const cat = CATEGORIES.find((c) => c.slug === product.category);
-  const comparisonProducts = [product, ...alternatives.slice(0, 2)];
+  // On a dupe's page, don't relist the original inside the "more picks" grid.
+  const gridAlts = originalInfo ? alternatives.filter((a) => a.id !== originalInfo.product.id && !a.isOriginal) : alternatives;
+  const comparisonProducts = originalInfo
+    ? [product, { ...originalInfo.product, matchScore: originalInfo.matchScore, dupeLevel: "premium" as const, reason: originalInfo.reason }, ...gridAlts.slice(0, 1)]
+    : [product, ...alternatives.slice(0, 2)];
+  // The stored benchmark line for the original (lives on its entry in this page's alt list).
+  const originalBenchmark = originalInfo ? alternatives.find((a) => a.id === originalInfo.product.id)?.reason : undefined;
 
   const BG_GRAD: Record<string, string> = {
     beauty: "linear-gradient(135deg, #f5dde3 0%, #e8c4cd 100%)",
@@ -80,12 +87,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const lowestOffer = offers.reduce<number | null>((min, o) => (o.price != null && (min === null || o.price < min) ? o.price : min), null);
   const cheapest = alternatives.filter((a) => a.price < product.price).sort((a, b) => a.price - b.price)[0];
   const faqs = [
-    {
-      q: `What is a good dupe for ${product.brandName} ${product.name}?`,
-      a: alternatives.length
-        ? `${alternatives[0].brandName} ${alternatives[0].name} is our top-ranked alternative (${alternatives[0].matchScore}% match) — ${alternatives[0].reason}`
-        : `We're still curating alternatives for ${product.brandName} ${product.name}.`,
-    },
+    originalInfo
+      ? {
+          q: `What is ${product.brandName} ${product.name} a dupe of?`,
+          a: `It's a ${originalInfo.matchScore}% match dupe of ${originalInfo.product.brandName} ${originalInfo.product.name} (${formatPrice(originalInfo.product.price)}) — ${originalInfo.reason}`,
+        }
+      : {
+          q: `What is a good dupe for ${product.brandName} ${product.name}?`,
+          a: alternatives.length
+            ? `${alternatives[0].brandName} ${alternatives[0].name} is our top-ranked alternative (${alternatives[0].matchScore}% match) — ${alternatives[0].reason}`
+            : `We're still curating alternatives for ${product.brandName} ${product.name}.`,
+        },
     {
       q: `Is there a cheaper alternative to ${product.brandName} ${product.name}?`,
       a: cheapest
@@ -269,21 +281,60 @@ export default async function ProductPage({ params }: ProductPageProps) {
         );
       })()}
 
-      {/* Alternatives */}
-      {alternatives.length > 0 && (
+      {/* THE ORIGINAL — this product is a dupe: show what it dupes and how it compares */}
+      {originalInfo && (
+        <section className="mb-16" style={{ background: "#fff", border: "1px solid var(--border)" }}>
+          <div className="p-8">
+            <p className="eyebrow mb-4">The Original · {originalInfo.matchScore}% match</p>
+            <div className="flex flex-col md:flex-row gap-8">
+              <Link href={`/product/${originalInfo.product.slug}`} className="no-underline flex-shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={productImage(originalInfo.product)} alt={`${originalInfo.product.brandName} ${originalInfo.product.name}`}
+                  width={180} height={180}
+                  style={{ width: 180, height: 180, objectFit: "contain", background: "#fff", border: "1px solid var(--border)", borderRadius: 12 }} />
+              </Link>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ fontSize: "0.78rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--muted)" }}>{originalInfo.product.brandName}</p>
+                <h2 style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: 4 }}>{originalInfo.product.name}</h2>
+                <p style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: 12 }}>
+                  {formatPrice(originalInfo.product.price)}
+                  {originalInfo.product.price > product.price && (
+                    <span style={{ color: "var(--rose, #b76e79)", marginLeft: 10, fontSize: "0.9rem" }}>
+                      this dupe saves you {formatPrice(originalInfo.product.price - product.price)} ({Math.round(((originalInfo.product.price - product.price) / originalInfo.product.price) * 100)}%)
+                    </span>
+                  )}
+                </p>
+                {originalBenchmark && (
+                  <p style={{ fontSize: "0.92rem", color: "var(--muted)", lineHeight: 1.7, marginBottom: 12 }}>{originalBenchmark}</p>
+                )}
+                <h3 style={{ fontSize: "0.9rem", fontWeight: 700, marginBottom: 6 }}>How {product.name} compares</h3>
+                <p style={{ fontSize: "0.92rem", color: "var(--muted)", lineHeight: 1.7, marginBottom: 16 }}>{originalInfo.reason}</p>
+                <Link href={`/product/${originalInfo.product.slug}`} className="no-underline inline-block px-5 py-3 btn-primary" style={{ fontWeight: 600 }}>
+                  See all dupes for {originalInfo.product.name} →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Alternatives — ranked dupes on an original's page; plain related picks on a dupe's page */}
+      {(product.isOriginal ? alternatives : gridAlts).length > 0 && (
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="eyebrow mb-1">{product.isOriginal && product.price >= 25 ? "Ranked dupes" : "Similar products"}</p>
+              <p className="eyebrow mb-1">{product.isOriginal && product.price >= 25 ? "Ranked dupes" : "Explore more"}</p>
               <h2 style={{ fontSize: "1.5rem", fontWeight: 600 }}>
-                {product.isOriginal && product.price >= 25 ? `Best dupes for ${product.name}` : `Alternatives to ${product.name}`}
+                {product.isOriginal && product.price >= 25 ? `Best dupes for ${product.name}` : `More ${product.subcategory.toLowerCase()} picks`}
               </h2>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {alternatives.map((alt) => (
-              <ProductCard key={alt.id} product={alt} matchScore={alt.matchScore} dupeLevel={alt.dupeLevel} reason={alt.reason} />
-            ))}
+            {product.isOriginal
+              ? alternatives.map((alt) => (
+                  <ProductCard key={alt.id} product={alt} matchScore={alt.matchScore} dupeLevel={alt.dupeLevel} reason={alt.reason} />
+                ))
+              : gridAlts.slice(0, 6).map((alt) => <ProductCard key={alt.id} product={alt} />)}
           </div>
         </section>
       )}
