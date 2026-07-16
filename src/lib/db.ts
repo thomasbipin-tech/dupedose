@@ -11,6 +11,7 @@ import {
   OFFERS,
   TRENDING_PRODUCTS,
   BRANDS,
+  CATEGORIES,
 } from "./data";
 import type {
   Product,
@@ -301,6 +302,16 @@ export async function getTrendingProducts(): Promise<Product[]> {
     if (data && data.length) return data.map(rowToProduct);
   }
   return TRENDING_PRODUCTS.map((id) => PRODUCTS.find((p) => p.id === id)).filter(Boolean) as Product[];
+}
+
+/** Category options (slug + label) for menus/dropdowns. DB-backed with seed fallback. */
+export async function getCategories(): Promise<{ slug: string; label: string }[]> {
+  const sb = supabaseAnon();
+  if (sb) {
+    const { data } = await sb.from("categories").select("slug,label").order("sort_order", { ascending: true });
+    if (data && data.length) return data as { slug: string; label: string }[];
+  }
+  return CATEGORIES.map((c) => ({ slug: c.slug, label: c.label }));
 }
 
 export async function getAllProductSlugs(): Promise<{ slug: string }[]> {

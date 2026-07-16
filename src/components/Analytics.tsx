@@ -20,6 +20,23 @@ export default function Analytics() {
           gtag('config', '${id}');
         `}
       </Script>
+      {/* Revenue signal: every outbound affiliate click (all offers route
+          through /api/go/<offerId>). Mark "affiliate_click" as a key event in
+          GA4 (Admin → Key events) to measure conversion, not just traffic. */}
+      <Script id="ga4-affiliate-clicks" strategy="afterInteractive">
+        {`
+          document.addEventListener('click', function (e) {
+            var el = e.target instanceof Element ? e.target.closest('a[href*="/api/go/"]') : null;
+            if (!el || typeof window.gtag !== 'function') return;
+            var m = (el.getAttribute('href') || '').match(/\\/api\\/go\\/([^/?#]+)/);
+            window.gtag('event', 'affiliate_click', {
+              offer_id: m ? m[1] : '',
+              page_path: location.pathname,
+              transport_type: 'beacon'
+            });
+          }, true);
+        `}
+      </Script>
     </>
   );
 }

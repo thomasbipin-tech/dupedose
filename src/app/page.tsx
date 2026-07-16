@@ -2,13 +2,28 @@ import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import ProductCard from "@/components/ProductCard";
 import { CATEGORIES, POPULAR_SEARCHES } from "@/lib/data";
-import { getTrendingProducts, getProductsByCategory } from "@/lib/db";
-import { Category } from "@/lib/types";
+import { getTrendingProducts, getProductsByCategory, getProductAlternatives } from "@/lib/db";
+import { Category, formatPrice } from "@/lib/types";
+import { productImage } from "@/lib/images";
 
 export const revalidate = 3600;
 
 export default async function HomePage() {
   const trending = await getTrendingProducts();
+
+  // Above-the-fold proof: real original→dupe pairs with the actual saving,
+  // so visitors see the value before they type anything.
+  const originals = trending.filter((p) => p.isOriginal && p.price > 0).slice(0, 8);
+  const pairsRaw = await Promise.all(
+    originals.map(async (orig) => {
+      const alts = await getProductAlternatives(orig.id);
+      const dupe = alts.filter((a) => a.price > 0 && a.price < orig.price).sort((a, b) => b.matchScore - a.matchScore)[0];
+      return dupe ? { orig, dupe, pct: Math.round((1 - dupe.price / orig.price) * 100) } : null;
+    })
+  );
+  const pairs = pairsRaw.filter((p): p is NonNullable<typeof p> => p !== null && p.pct >= 10)
+    .sort((a, b) => b.pct - a.pct)
+    .slice(0, 4);
   // A representative real product image per category for the tile backgrounds.
   const covers: Record<string, string> = {};
   await Promise.all(
@@ -22,25 +37,58 @@ export default async function HomePage() {
     <>
       {/* ── HERO ── */}
       <section style={{ background: "var(--background-alt)", borderBottom: "1px solid var(--border)" }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ paddingTop: "5.5rem", paddingBottom: "5.5rem" }}>
-          <p className="eyebrow fade-up" style={{ marginBottom: 18 }}>AI Dupe Discovery · Beauty · Hair · Jewelry</p>
-          <h1 className="fade-up fade-up-delay-1" style={{ fontSize: "clamp(2.4rem, 6vw, 4.25rem)", fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", marginBottom: "1.1rem" }}>
-            Smell, look &amp; glow expensive — <span className="shimmer-text">for less.</span>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
+          <p className="eyebrow fade-up" style={{ marginBottom: 14 }}>AI Dupe Discovery · Beauty · Hair · Jewelry</p>
+          <h1 className="fade-up fade-up-delay-1" style={{ fontSize: "clamp(2.1rem, 5vw, 3.4rem)", fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", marginBottom: "0.8rem" }}>
+            Find the affordable dupe for any <span className="shimmer-text">luxury product.</span>
           </h1>
-          <p className="fade-up fade-up-delay-2" style={{ fontSize: "1.08rem", color: "var(--muted)", maxWidth: 560, margin: "0 auto 2.25rem", lineHeight: 1.6 }}>
-            Search any luxury or viral product. We find the best affordable dupes — ranked by match score, with the reasoning behind every pick.
+          <p className="fade-up fade-up-delay-2" style={{ fontSize: "1.02rem", color: "var(--muted)", maxWidth: 560, margin: "0 auto 1.6rem", lineHeight: 1.6 }}>
+            Real alternatives, ranked by match score — with the reasoning and the exact saving behind every pick.
           </p>
-          <div className="fade-up fade-up-delay-3 max-w-2xl mx-auto mb-6">
+          <div className="fade-up fade-up-delay-3 max-w-2xl mx-auto mb-4">
             <SearchBar large />
           </div>
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap gap-2 justify-center mb-8">
             {POPULAR_SEARCHES.slice(0, 6).map((s) => (
               <Link key={s} href={`/search?q=${encodeURIComponent(s)}`} className="no-underline"
-                style={{ padding: "6px 13px", fontSize: "0.76rem", color: "var(--foreground)", background: "#fff", border: "1px solid var(--border-strong)", borderRadius: 999 }}>
+                style={{ padding: "5px 12px", fontSize: "0.74rem", color: "var(--foreground)", background: "#fff", border: "1px solid var(--border-strong)", borderRadius: 999 }}>
                 {s}
               </Link>
             ))}
           </div>
+
+          {/* ── PROOF: real dupe pairs, visible before anyone types ── */}
+          {pairs.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+              {pairs.map(({ orig, dupe, pct }) => (
+                <Link key={orig.id} href={`/product/${orig.slug}`} className="no-underline group">
+                  <div className="product-card relative h-full" style={{ background: "#fff", border: "1px solid var(--border)", padding: "16px 16px 14px" }}>
+                    <span style={{ position: "absolute", top: 12, right: 12, background: "var(--rose, #b76e79)", color: "#fff", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.05em", padding: "4px 9px", borderRadius: 999 }}>
+                      SAVE {pct}%
+                    </span>
+                    <div className="flex items-center gap-3" style={{ marginBottom: 10 }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={productImage(orig)} alt={`${orig.brandName} ${orig.name}`} width={48} height={48} style={{ width: 48, height: 48, objectFit: "contain", background: "#fff", border: "1px solid var(--border)", borderRadius: 8, flexShrink: 0 }} />
+                      <div style={{ minWidth: 0 }}>
+                        <p className="truncate" style={{ fontSize: "0.7rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)" }}>{orig.brandName}</p>
+                        <p className="truncate" style={{ fontSize: "0.82rem", fontWeight: 600 }}>{orig.name}</p>
+                        <p style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "line-through" }}>{formatPrice(orig.price)}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={productImage(dupe)} alt={`${dupe.brandName} ${dupe.name}`} width={48} height={48} style={{ width: 48, height: 48, objectFit: "contain", background: "#fff", border: "1px solid var(--rose, #b76e79)", borderRadius: 8, flexShrink: 0 }} />
+                      <div style={{ minWidth: 0 }}>
+                        <p className="truncate" style={{ fontSize: "0.7rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--rose, #b76e79)" }}>{dupe.brandName} · dupe</p>
+                        <p className="truncate" style={{ fontSize: "0.82rem", fontWeight: 600 }}>{dupe.name}</p>
+                        <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--rose, #b76e79)" }}>{formatPrice(dupe.price)}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
