@@ -14,7 +14,8 @@
     "gen-images": "node node_modules/.bin/tsx scripts/gen-images.ts",
     "build-catalog": "node --env-file=.env.local node_modules/.bin/tsx scripts/build-catalog.ts",
     "fetch-clusters": "node --env-file=.env.local node_modules/.bin/tsx scripts/fetch-clusters.ts",
-    "ingest-ranked": "node --env-file=.env.local node_modules/.bin/tsx scripts/ingest-ranked.ts"
+    "ingest-ranked": "node --env-file=.env.local node_modules/.bin/tsx scripts/ingest-ranked.ts",
+    "audit-links": "node scripts/audit-links.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
